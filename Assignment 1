@@ -1,0 +1,44 @@
+Capsule Wardrobe – Project Plan
+1. The Idea
+An AI-powered personal styling app that helps users make the most of the clothes they already own by creating outfit combinations, encouraging rewear, and supporting smarter clothing decisions.
+2. How It Works
+
+
+1. Build your digital wardrobe
+Upload photos of clothing. The app organizes them into a visual closet, starting with your Google Drive database.
+
+
+2. Get personalized outfit suggestions
+AI recommends outfits based on personal style, occasion, current trends, existing clothes, and automatically retrieved daily weather.
+
+
+3. Rewear and rediscover
+Find new ways to style existing pieces and identify clothes that are rarely worn through a Wardrobe Graveyard.
+
+
+4. Shop more intentionally
+Upload a potential purchase to see how it pairs with your wardrobe and whether it adds versatile outfit options.
+
+
+5. Share and pack
+Share wardrobes with friends, borrow clothing, and generate weather-aware holiday packing lists using clothes you own.
+
+
+4. What I Want to Achieve
+
+Generate personalized outfit combinations.
+Track and encourage rewear.
+Discover neglected clothes.
+Explore potential purchases.
+Share and borrow clothes.
+Plan outfits and packing for holidays using automatically retrieved weather data.
+
+5. Development Plan
+
+Connect Google Drive and display the existing wardrobe.
+Build the digital closet and clothing upload system.
+Implement AI outfit generation and automatic weather integration.
+Add rewear tracking and the Wardrobe Graveyard.
+Develop smart shopping and holiday packing.
+Add friend sharing and borrowing.
+Test the app and refine the experience.
