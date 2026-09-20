@@ -1,0 +1,7 @@
+.venv/
+.env
+.credentials/
+__pycache__/
+*.pyc
+.DS_Store
+Outfit photos/
