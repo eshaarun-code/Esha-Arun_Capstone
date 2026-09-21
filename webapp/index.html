@@ -1,0 +1,1938 @@
+<title>Capsule Week</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @font-face {
+    font-family: "Satoshi";
+    src: url("/fonts/satoshi-400.woff2") format("woff2");
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Satoshi";
+    src: url("/fonts/satoshi-500.woff2") format("woff2");
+    font-weight: 500; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Satoshi";
+    src: url("/fonts/satoshi-700.woff2") format("woff2");
+    font-weight: 600 700; font-style: normal; font-display: swap;
+  }
+  :root {
+    --page-bg: #EDEAE3;
+    --bg: #FFFFFF;
+    --surface: #FFFFFF;
+    --surface-sunk: #F4F2EE;
+    --ink: #201D1A;
+    --ink-muted: #726B60;
+    --ink-faint: #A6A093;
+    --line: #E7E2D8;
+    --accent: #6E2438;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #F3DEE2;
+    --gold: #93732F;
+    --good: #3F6B4C;
+    --shadow: 0 1px 2px rgba(32,29,26,0.04), 0 6px 20px -14px rgba(32,29,26,0.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page-bg: #0E0D10;
+      --bg: #17151A;
+      --surface: #211E24;
+      --surface-sunk: #19171B;
+      --ink: #ECE7E0;
+      --ink-muted: #A69E93;
+      --ink-faint: #756E64;
+      --line: #38343B;
+      --accent: #E28FA0;
+      --accent-ink: #1D1418;
+      --accent-soft: #3A2229;
+      --gold: #D4AF61;
+      --good: #7FBF93;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -14px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --page-bg: #0E0D10;
+    --bg: #17151A;
+    --surface: #211E24;
+    --surface-sunk: #19171B;
+    --ink: #ECE7E0;
+    --ink-muted: #A69E93;
+    --ink-faint: #756E64;
+    --line: #38343B;
+    --accent: #E28FA0;
+    --accent-ink: #1D1418;
+    --accent-soft: #3A2229;
+    --gold: #D4AF61;
+    --good: #7FBF93;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -14px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { background: var(--page-bg); }
+  body {
+    color: var(--ink);
+    font-family: "Satoshi", -apple-system, sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+  }
+  h1, h2, h3, .display { font-family: "Satoshi", -apple-system, sans-serif; text-wrap: balance; }
+
+  /* ---------- iPhone-15 proportioned app shell ---------- */
+  .app {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .app-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .app-header .brand { display: flex; flex-direction: column; }
+  .app-header .eyebrow {
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin: 0;
+  }
+  .app-header h1 { font-size: 21px; font-weight: 600; margin: 2px 0 0; }
+  .theme-toggle {
+    width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  .theme-toggle svg { width: 17px; height: 17px; }
+
+  .screens { flex: 1; overflow-y: auto; padding: 16px 18px 90px; }
+  .screen[hidden] { display: none; }
+
+  .screen-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+  .screen-head h2 { font-size: 19px; font-weight: 600; margin: 0; }
+  #cal-month-label { font-size: 25px; font-weight: 700; }
+  .screen-sub { font-size: 11px; color: var(--ink-faint); font-family: "Satoshi", -apple-system, sans-serif; }
+
+  /* ---------- bottom nav ---------- */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 430px;
+    display: flex; background: var(--surface); border-top: 1px solid var(--line);
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+    z-index: 40;
+  }
+  .nav-btn {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    border: none; background: transparent; color: var(--ink-faint); cursor: pointer;
+    padding: 4px 2px; font-family: "Satoshi", -apple-system, sans-serif; font-size: 10px; font-weight: 600;
+    white-space: nowrap;
+  }
+  .nav-btn svg { width: 21px; height: 21px; }
+  .nav-btn.active { color: var(--accent); }
+  .nav-fab-spacer { flex: 1; }
+  .nav-fab {
+    position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
+    width: 52px; height: 52px; border-radius: 999px; border: none;
+    background: var(--accent); color: var(--accent-ink); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px -4px rgba(0,0,0,0.45); z-index: 41;
+  }
+
+  /* ---------- drive sync (small, tucked in home screen) ---------- */
+  .drive-sync { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .drive-sync-btn {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 999px; padding: 5px 14px; font-size: 11px; font-weight: 600;
+    cursor: pointer; font-family: "Satoshi", -apple-system, sans-serif; white-space: nowrap;
+  }
+  .drive-sync-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .drive-sync-status { font-size: 10.5px; color: var(--ink-faint); }
+
+  /* ---------- calendar (home) ---------- */
+  .month-nav { display: flex; align-items: center; gap: 10px; font-family: "Satoshi", -apple-system, sans-serif; font-size: 12px; }
+  .month-nav button {
+    border: 1px solid var(--line); background: var(--surface); border-radius: 999px;
+    width: 24px; height: 24px; cursor: pointer; color: var(--ink); font-size: 13px;
+  }
+  .calendar-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; margin-bottom: 16px;
+    border-top: 1px solid var(--line); border-left: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  }
+  .cal-dow {
+    text-align: center; font-size: 10px; letter-spacing: 0.02em; text-transform: uppercase;
+    color: var(--ink-faint); padding: 8px 0 7px; font-weight: 600; background: var(--surface-sunk);
+    border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .cal-day {
+    aspect-ratio: 0.82; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    background: var(--surface); padding: 4px 3px; cursor: pointer; position: relative; overflow: hidden;
+  }
+  .cal-day.empty { background: var(--surface-sunk); cursor: default; }
+  .cal-date-num {
+    display: flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; margin: 0 auto;
+    font-family: "Satoshi", -apple-system, sans-serif; font-size: 11px; font-weight: 500;
+    color: var(--ink); border-radius: 999px; position: relative; z-index: 1;
+  }
+  .cal-day.today .cal-date-num { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+  .cal-day.has-log:not(.today) .cal-date-num { font-weight: 700; }
+  .cal-day img.full { position: absolute; inset: 22px 3px 3px; width: calc(100% - 6px); height: calc(100% - 25px); object-fit: cover; border-radius: 5px; opacity: 0.95; }
+  .cal-suggest-pair { position: absolute; inset: 22px 3px 3px; display: flex; gap: 2px; }
+  .cal-suggest-pair img { width: 50%; height: 100%; object-fit: cover; border-radius: 4px; opacity: 0.5; }
+  .cal-dot { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 999px; background: var(--accent); z-index: 1; }
+
+  .streak-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .streak-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 10px;
+  }
+  .streak-card img { width: 34px; height: 34px; object-fit: cover; border-radius: 8px; background: #fff; flex: none; }
+  .streak-card .streak-icon {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--surface-sunk);
+    display: flex; align-items: center; justify-content: center; flex: none; color: var(--accent);
+  }
+  .streak-card .streak-icon svg { width: 17px; height: 17px; }
+  .streak-num { font-family: "Satoshi", -apple-system, sans-serif; font-size: 17px; font-weight: 600; line-height: 1.1; }
+  .streak-label { font-size: 9.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* ---------- shared cards / tags ---------- */
+  .filters { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 14px; padding: 2px 2px 4px; }
+  .cat-icon-btn {
+    flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    border: none; background: transparent; cursor: pointer; color: var(--ink-muted);
+    font-family: "Satoshi", -apple-system, sans-serif;
+  }
+  .cat-icon-circle {
+    width: 44px; height: 44px; border-radius: 999px; background: var(--surface-sunk); border: 1.5px solid transparent;
+    display: flex; align-items: center; justify-content: center; color: var(--ink-muted);
+  }
+  .cat-icon-circle svg { width: 20px; height: 20px; }
+  .cat-icon-btn.active .cat-icon-circle { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .cat-icon-btn.active .cat-icon-label { color: var(--ink); font-weight: 700; }
+  .cat-icon-label { font-size: 9.5px; white-space: nowrap; }
+  .chip {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-muted);
+    border-radius: 999px; padding: 5px 12px; font-size: 11px; font-weight: 600;
+    cursor: pointer; font-family: "Satoshi", -apple-system, sans-serif;
+  }
+  .chip.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  .weather-filter { display: flex; gap: 4px; flex: none; }
+  .wf-btn {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-muted);
+    border-radius: 999px; width: 28px; height: 24px; font-size: 12px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-family: "Satoshi", -apple-system, sans-serif; padding: 0;
+  }
+  .wf-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  .closet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .item-card {
+    position: relative; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; overflow: hidden; box-shadow: var(--shadow);
+  }
+  .item-card img { width: 100%; height: 150px; object-fit: cover; display: block; background: #fff; }
+  .item-body { padding: 8px 10px 10px; }
+  .item-actions { position: absolute; top: 6px; right: 6px; z-index: 1; display: flex; gap: 5px; }
+  .item-action {
+    width: 24px; height: 24px; border-radius: 999px; border: none;
+    background: rgba(255,255,255,0.92); color: #24211D;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  }
+  .item-action[data-action="delete"]:hover { background: #fff; color: #B3261E; }
+  .item-action[data-action="graveyard"]:hover { background: #fff; color: var(--accent); }
+  .item-action svg { width: 12px; height: 12px; }
+  .item-type { font-weight: 600; font-size: 12px; text-transform: capitalize; margin-bottom: 2px; line-height: 1.25; }
+  .item-color { font-size: 10.5px; color: var(--ink-muted); text-transform: capitalize; margin-bottom: 6px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 3px; }
+  .tag {
+    font-size: 8.5px; letter-spacing: 0.02em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 999px; font-weight: 700;
+  }
+  .tag.season-summer { background: #E9DFA1; color: #4A3E0B; }
+  .tag.season-winter { background: var(--accent-soft); color: var(--accent); }
+  .tag.cat { background: var(--surface-sunk); color: var(--ink-muted); }
+  .tag.cat-special { background: var(--gold); color: #FFFFFF; }
+  .tag.worn { background: var(--good); color: #fff; }
+  :root[data-theme="dark"] .tag.season-summer { background: #4A3E0B; color: #E9DFA1; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .tag.season-summer { background: #4A3E0B; color: #E9DFA1; }
+  }
+
+  .fab-add {
+    width: 100%; margin-bottom: 14px;
+    background: var(--accent); color: var(--accent-ink); border: none; border-radius: 999px;
+    padding: 11px 0; font-size: 13px; font-weight: 700; cursor: pointer; font-family: "Satoshi", -apple-system, sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .fab-add svg { width: 16px; height: 16px; }
+
+  /* ---------- packing ---------- */
+  .packing-form {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;
+  }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-label {
+    font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700;
+  }
+  .packing-form input[type="text"], .packing-form input[type="date"] {
+    border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; font-size: 13px;
+    font-family: "Satoshi", -apple-system, sans-serif; color: var(--ink); background: var(--surface); width: 100%;
+  }
+  .packing-form input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .submit-btn {
+    display: block; width: 100%; box-sizing: border-box;
+    background: var(--accent); color: var(--accent-ink); border: none; border-radius: 999px;
+    padding: 11px 20px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: "Satoshi", -apple-system, sans-serif;
+    white-space: nowrap; text-align: center;
+  }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .status-text { font-size: 12px; color: var(--ink-muted); margin: 8px 0; }
+  .packing-result { display: flex; flex-direction: column; gap: 14px; }
+  .packing-summary h3 { font-size: 16px; font-weight: 600; margin: 0 0 4px; }
+  .add-help { font-size: 12px; color: var(--ink-muted); line-height: 1.5; margin: 0; }
+  .packing-days { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  .packing-day {
+    flex: none; min-width: 78px; border: 1px solid var(--line); border-radius: 10px;
+    padding: 7px 9px; background: var(--surface); display: flex; flex-direction: column; gap: 3px;
+  }
+  .packing-day.estimated { border-style: dashed; }
+  .packing-day-date { font-size: 11px; font-weight: 600; color: var(--ink); }
+  .packing-day-weather { font-size: 10px; color: var(--ink-muted); font-family: "Satoshi", -apple-system, sans-serif; }
+  .packing-essentials ul { margin: 6px 0 0; padding-left: 16px; font-size: 12px; color: var(--ink-muted); }
+  .packing-essentials li { margin-bottom: 4px; }
+  .packing-pieces { display: flex; flex-direction: column; gap: 12px; }
+
+  /* ---------- insight cards ---------- */
+  .insight-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px; box-shadow: var(--shadow); margin-bottom: 12px;
+  }
+  .insight-card.clickable { cursor: pointer; }
+  .insight-card.clickable:active { background: var(--surface-sunk); }
+  .insight-label { font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; margin-bottom: 8px; }
+  .insight-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; }
+  .insight-row img { width: 28px; height: 28px; object-fit: cover; border-radius: 6px; background: #fff; flex: none; }
+  .insight-row span { flex: 1; display: flex; justify-content: space-between; align-items: center; gap: 8px; text-transform: capitalize; }
+  .insight-row b { font-family: "Satoshi", -apple-system, sans-serif; color: var(--ink-muted); font-weight: 700; font-size: 10.5px; }
+  .insight-big { font-family: "Satoshi", -apple-system, sans-serif; font-size: 30px; font-weight: 600; line-height: 1; }
+  .insight-sub { font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
+  .insight-empty { font-size: 12px; color: var(--ink-faint); }
+
+  .overview-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; }
+  .overview-stat {
+    flex: none; width: 68px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+  }
+  .overview-stat-icon {
+    width: 30px; height: 30px; border-radius: 8px; background: var(--surface-sunk);
+    display: flex; align-items: center; justify-content: center; color: var(--accent);
+  }
+  .overview-stat-icon svg { width: 16px; height: 16px; }
+  .overview-stat-num { font-family: "Satoshi", sans-serif; font-size: 16px; font-weight: 700; color: var(--ink); }
+  .overview-stat-label { font-size: 8.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .color-row { display: flex; gap: 12px; overflow-x: auto; padding: 2px 2px 6px; }
+  .color-stat { flex: none; display: flex; flex-direction: column; align-items: center; gap: 3px; width: 50px; text-align: center; }
+  .color-stat-swatch { width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--line); }
+  .color-stat-pct { font-family: "Satoshi", sans-serif; font-size: 12px; font-weight: 700; color: var(--ink); }
+  .color-stat-name { font-size: 9px; color: var(--ink-muted); text-transform: capitalize; }
+
+  .insight-donut-wrap { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .insight-donut { width: 84px; height: 84px; border-radius: 999px; display: flex; align-items: center; justify-content: center; flex: none; }
+  .insight-donut-hole { width: 60px; height: 60px; border-radius: 999px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .insight-donut-num { font-family: "Satoshi", sans-serif; font-size: 18px; font-weight: 700; line-height: 1; color: var(--ink); }
+  .insight-donut-label { font-size: 8.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+  .insight-donut-legend { display: flex; flex-direction: column; gap: 6px; font-size: 11.5px; color: var(--ink-muted); }
+  .insight-donut-legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; }
+
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .bar-row img { width: 30px; height: 30px; border-radius: 6px; object-fit: cover; background: #fff; flex: none; }
+  .bar-row-main { flex: 1; min-width: 0; }
+  .bar-row-label { font-size: 11px; color: var(--ink); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: capitalize; }
+  .bar-track { height: 7px; border-radius: 999px; background: var(--surface-sunk); overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 999px; }
+  .bar-count { font-size: 10.5px; font-weight: 700; color: var(--ink-muted); flex: none; font-variant-numeric: tabular-nums; }
+  .piece-text-only { color: var(--ink-muted); font-style: italic; }
+
+  .graveyard-actions { display: flex; gap: 5px; margin-top: 8px; }
+  .gy-btn {
+    flex: 1; border: 1px solid var(--line); background: var(--surface); border-radius: 8px;
+    padding: 6px 0; font-size: 10.5px; font-weight: 700; cursor: pointer; font-family: "Satoshi", -apple-system, sans-serif;
+  }
+  .gy-btn.donate { color: var(--good); }
+  .gy-btn.trash { color: #B3261E; }
+
+  /* ---------- modals (bottom sheets) ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(20,18,16,0.55);
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay[hidden] { display: none; }
+  .modal {
+    background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px 18px calc(20px + env(safe-area-inset-bottom, 0px));
+    max-width: 430px; width: 100%; max-height: 85vh; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; }
+  .modal-head h3 { font-family: "Satoshi", -apple-system, sans-serif; font-size: 17px; font-weight: 600; margin: 0; }
+  .modal-close {
+    border: none; background: transparent; font-size: 20px; line-height: 1; cursor: pointer;
+    color: var(--ink-faint); width: 26px; height: 26px;
+  }
+  .file-drop {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    border: 1.5px dashed var(--line); border-radius: 10px; background: var(--surface-sunk);
+    min-height: 130px; cursor: pointer; text-align: center; padding: 10px; overflow: hidden;
+  }
+  .file-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .file-drop-icon { color: var(--ink-faint); }
+  .file-drop-text { font-size: 11px; color: var(--ink-muted); font-weight: 600; }
+  .file-drop img.preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  .pending-list { display: flex; flex-direction: column; gap: 7px; }
+  .pending-item {
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid var(--line); border-radius: 10px; padding: 7px 9px; background: var(--surface-sunk);
+  }
+  .pending-item img { width: 36px; height: 36px; object-fit: cover; border-radius: 6px; background: #fff; flex: none; }
+  .pending-item .pending-status { font-size: 11px; color: var(--ink-muted); flex: 1; }
+  .pending-item .detected-row { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+  .pending-item .detected-row .tag { font-size: 9.5px; padding: 2px 7px; }
+  .pending-remove {
+    flex: none; width: 20px; height: 20px; border-radius: 999px; border: none;
+    background: transparent; color: var(--ink-faint); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 14px; line-height: 1;
+  }
+
+  .piece-picker { display: flex; flex-wrap: wrap; gap: 7px; max-height: 160px; overflow-y: auto; padding: 2px; }
+  .piece-chip {
+    display: flex; align-items: center; gap: 5px; border: 1px solid var(--line);
+    background: var(--surface); border-radius: 999px; padding: 3px 9px 3px 3px;
+    font-size: 10.5px; cursor: pointer; color: var(--ink-muted); font-family: "Satoshi", -apple-system, sans-serif;
+    max-width: 150px;
+  }
+  .piece-chip img { width: 20px; height: 20px; border-radius: 999px; object-fit: cover; background: #fff; flex: none; }
+  .piece-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: capitalize; }
+  .piece-chip.selected { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+  .day-detail-photo img {
+    width: 100%; max-height: 62vh; border-radius: 10px; object-fit: contain;
+    background: var(--surface-sunk); display: block;
+  }
+  .no-photo {
+    background: var(--surface-sunk); border-radius: 10px; height: 160px;
+    display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 12px;
+  }
+  .suggest-pieces { display: flex; gap: 10px; }
+  .suggest-piece { position: relative; flex: 1; background: var(--surface-sunk); border-radius: 10px; overflow: hidden; }
+  .suggest-piece img { width: 100%; height: 150px; object-fit: cover; display: block; background: #fff; }
+  .suggest-piece .label { padding: 6px 8px 8px; font-size: 11px; line-height: 1.3; text-transform: capitalize; }
+  .suggest-piece .label .color { color: var(--ink-muted); }
+  .shuffle-btn {
+    position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 999px;
+    border: none; background: rgba(255,255,255,0.92); color: #24211D;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  }
+  .shuffle-btn svg { width: 12px; height: 12px; }
+  .weather-badge {
+    display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 10px;
+    font-variant-numeric: tabular-nums; margin-bottom: 10px;
+  }
+  .weather-badge svg { width: 20px; height: 20px; flex: none; }
+  .weather-badge .weather-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .weather-badge .temp-big { font-family: "Satoshi", -apple-system, sans-serif; font-size: 19px; font-weight: 600; line-height: 1; }
+  .weather-badge .weather-desc {
+    font-family: "Satoshi", -apple-system, sans-serif; font-size: 10px; text-transform: capitalize; opacity: 0.8; white-space: nowrap;
+  }
+  .weather-badge .temp-range { font-family: "Satoshi", -apple-system, sans-serif; font-size: 10.5px; opacity: 0.75; margin-left: auto; flex: none; }
+  .weather-clear { background: #FBF0C7; color: #6B4E00; }
+  .weather-cloud { background: #E7E6ED; color: #46454F; }
+  .weather-rain  { background: #D7E8FA; color: #1E4C8C; }
+  .weather-storm { background: #E4D7F5; color: #4B2A82; }
+  :root[data-theme="dark"] .weather-clear { background: #4A3E14; color: #F3DE96; }
+  :root[data-theme="dark"] .weather-cloud { background: #34333B; color: #C9C7D3; }
+  :root[data-theme="dark"] .weather-rain  { background: #1E3557; color: #A9CBF5; }
+  :root[data-theme="dark"] .weather-storm { background: #33244A; color: #D3B8F0; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .weather-clear { background: #4A3E14; color: #F3DE96; }
+    :root:not([data-theme="light"]) .weather-cloud { background: #34333B; color: #C9C7D3; }
+    :root:not([data-theme="light"]) .weather-rain  { background: #1E3557; color: #A9CBF5; }
+    :root:not([data-theme="light"]) .weather-storm { background: #33244A; color: #D3B8F0; }
+  }
+
+  footer.note {
+    margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--line);
+    font-size: 10.5px; color: var(--ink-faint); font-family: "Satoshi", -apple-system, sans-serif;
+  }
+
+  /* ---------- build-an-outfit entry card + modal ---------- */
+  .build-outfit-card {
+    width: 100%; display: flex; align-items: center; gap: 12px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px; box-shadow: var(--shadow); cursor: pointer; text-align: left;
+    font-family: "Satoshi", -apple-system, sans-serif; color: var(--ink);
+  }
+  .build-outfit-icon {
+    width: 38px; height: 38px; border-radius: 10px; background: var(--surface-sunk);
+    display: flex; align-items: center; justify-content: center; flex: none; color: var(--accent);
+  }
+  .build-outfit-text { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .build-outfit-title { font-size: 13px; font-weight: 700; }
+  .build-outfit-sub { font-size: 11px; color: var(--ink-muted); }
+
+  .build-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .build-slot {
+    aspect-ratio: 1; border: 1.5px dashed var(--line); border-radius: 10px; background: var(--surface-sunk);
+    display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+  }
+  .build-slot.filled { border-style: solid; border-color: var(--line); background: var(--surface); }
+  .build-slot img { width: 100%; height: 100%; object-fit: cover; }
+  .build-slot .slot-label { font-size: 9px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+  .build-slot .slot-remove {
+    position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 999px; border: none;
+    background: rgba(255,255,255,0.92); color: #B3261E; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; padding: 0;
+  }
+  .build-slot .slot-remove svg { width: 9px; height: 9px; }
+  .build-rail { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 12px; }
+  .build-rail-item { flex: none; width: 62px; cursor: pointer; text-align: center; }
+  .build-rail-item img {
+    width: 62px; height: 62px; object-fit: cover; border-radius: 8px; border: 1.5px solid var(--line); background: #fff; display: block;
+  }
+  .build-rail-item.selected img { border-color: var(--accent); border-width: 2px; }
+  .build-rail-item span {
+    display: block; font-size: 9px; color: var(--ink-muted); margin-top: 3px; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; text-transform: capitalize;
+  }
+  .build-saved-row {
+    display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 10px;
+    padding: 6px 8px; margin-bottom: 6px; background: var(--surface);
+  }
+  .build-saved-row .saved-thumbs { display: flex; flex: none; }
+  .build-saved-row .saved-thumbs img {
+    width: 26px; height: 26px; border-radius: 6px; object-fit: cover; border: 1.5px solid var(--surface);
+    margin-left: -8px; background: #fff;
+  }
+  .build-saved-row .saved-thumbs img:first-child { margin-left: 0; }
+  .build-saved-row .saved-date { font-size: 10.5px; color: var(--ink-muted); flex: 1; }
+</style>
+
+<div class="app">
+  <header class="app-header">
+    <div class="brand">
+      <p class="eyebrow">Capsule Wardrobe</p>
+      <h1>Capsule Week</h1>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode">
+      <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+    </button>
+  </header>
+
+  <div class="screens">
+
+    <!-- ============ HOME: calendar (past logs + upcoming suggestions) ============ -->
+    <section class="screen" id="screen-home" hidden>
+      <div class="screen-head">
+        <h2 id="cal-month-label"></h2>
+        <div class="month-nav">
+          <button type="button" id="cal-prev" title="Previous month">&larr;</button>
+          <button type="button" id="cal-next" title="Next month">&rarr;</button>
+        </div>
+      </div>
+      <div class="drive-sync">
+        <span class="drive-sync-status" id="drive-sync-status"></span>
+        <button class="drive-sync-btn" id="drive-sync-btn">Sync with Drive</button>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+      <div class="streak-row" id="streak-row"></div>
+      <button type="button" class="build-outfit-card" id="open-build-outfit">
+        <span class="build-outfit-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg></span>
+        <span class="build-outfit-text">
+          <span class="build-outfit-title">Build an outfit from scratch</span>
+          <span class="build-outfit-sub">Mix and match pieces from your closet</span>
+        </span>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <footer class="note" id="footer-note"></footer>
+    </section>
+
+    <!-- ============ CLOSET ============ -->
+    <section class="screen" id="screen-closet" hidden>
+      <div class="screen-head">
+        <h2>Full closet</h2>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="screen-sub" id="closet-count"></span>
+          <div class="weather-filter" id="weather-filter"></div>
+        </div>
+      </div>
+      <button type="button" class="fab-add" id="open-add-piece">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add a piece
+      </button>
+      <div class="filters" id="filters"></div>
+      <div class="closet-grid" id="closet-grid"></div>
+    </section>
+
+    <!-- ============ PACK ============ -->
+    <section class="screen" id="screen-pack" hidden>
+      <div class="screen-head">
+        <h2>Pack for a trip</h2>
+      </div>
+      <span class="screen-sub" style="display:block;margin-bottom:12px;">Weather-based, from your own closet</span>
+      <form class="packing-form" id="packing-form">
+        <div class="field-group">
+          <span class="field-label">Destination</span>
+          <input type="text" id="pack-destination" placeholder="e.g. Goa, India" required>
+        </div>
+        <div class="field-group">
+          <span class="field-label">Start date</span>
+          <input type="date" id="pack-start" required>
+        </div>
+        <div class="field-group">
+          <span class="field-label">End date</span>
+          <input type="date" id="pack-end" required>
+        </div>
+        <button type="submit" class="submit-btn" id="pack-submit">Build packing list</button>
+      </form>
+      <div class="status-text" id="packing-status"></div>
+      <div class="packing-result" id="packing-result"></div>
+    </section>
+
+    <!-- ============ HEALTH: insights + graveyard ============ -->
+    <section class="screen" id="screen-health">
+      <div class="screen-head"><h2>Style insights</h2></div>
+      <div id="insights-grid" style="margin-bottom:20px;"></div>
+      <div class="screen-head">
+        <h2>Wardrobe graveyard</h2>
+        <span class="screen-sub" id="graveyard-count"></span>
+      </div>
+      <p class="add-help" style="margin-bottom:12px;">Pieces you&rsquo;ve set aside to donate or trash. Nothing here is permanent until you choose one.</p>
+      <div class="closet-grid" id="graveyard-grid"></div>
+    </section>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn" data-screen="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+      Calendar
+    </button>
+    <button class="nav-btn" data-screen="closet">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
+      Closet
+    </button>
+    <div class="nav-fab-spacer"></div>
+    <button class="nav-btn" data-screen="pack">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      Pack
+    </button>
+    <button class="nav-btn active" data-screen="health">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      Home
+    </button>
+  </nav>
+
+  <button class="nav-fab" id="nav-fab-camera" title="Log today&rsquo;s outfit">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+  </button>
+</div>
+
+<!-- ============ MODAL: add a piece ============ -->
+<div class="modal-overlay" id="add-piece-overlay" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Add a piece</h3>
+      <button type="button" class="modal-close" id="add-piece-close">&times;</button>
+    </div>
+    <span class="screen-sub" id="upload-status">Checking the local server&hellip;</span>
+    <form id="upload-form">
+      <label class="file-drop" id="file-drop">
+        <input type="file" id="upload-file" accept="image/*" multiple required>
+        <svg class="file-drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <span class="file-drop-text" id="file-drop-text">Choose one or more photos</span>
+      </label>
+      <p class="add-help" style="margin:10px 0;">Gemini (your local server) looks at each photo and works out the piece, color, and season.</p>
+      <div class="pending-list" id="pending-list"></div>
+      <button type="submit" class="submit-btn" id="upload-submit" disabled style="margin-top:12px;">Add to closet</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MODAL: log today's outfit ============ -->
+<div class="modal-overlay" id="outfit-modal-overlay" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Log today&rsquo;s outfit</h3>
+      <button type="button" class="modal-close" id="outfit-modal-close">&times;</button>
+    </div>
+    <label class="file-drop" id="outfit-photo-drop">
+      <input type="file" id="outfit-photo-input" accept="image/*" capture="environment">
+      <svg class="file-drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span class="file-drop-text" id="outfit-photo-text">Take or choose a photo</span>
+    </label>
+    <div class="field-group">
+      <span class="field-label">Which pieces did you wear? (optional)</span>
+      <div class="piece-picker" id="piece-picker"></div>
+    </div>
+    <button type="button" class="submit-btn" id="outfit-save-btn">Save today&rsquo;s outfit</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: day detail (logged look or suggestion) ============ -->
+<div class="modal-overlay" id="day-modal-overlay" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="day-modal-title"></h3>
+      <button type="button" class="modal-close" id="day-modal-close">&times;</button>
+    </div>
+    <div id="day-modal-body"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL: insights detail (unworn / donate / most worn) ============ -->
+<div class="modal-overlay" id="insights-detail-overlay" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Style insights</h3>
+      <button type="button" class="modal-close" id="insights-detail-close">&times;</button>
+    </div>
+    <div id="insights-detail-body"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL: build an outfit from scratch ============ -->
+<div class="modal-overlay" id="build-outfit-overlay" hidden>
+  <div class="modal" style="max-height:92vh;">
+    <div class="modal-head">
+      <h3>Build an outfit</h3>
+      <button type="button" class="modal-close" id="build-outfit-close">&times;</button>
+    </div>
+    <div class="build-slots" id="build-slots"></div>
+    <button type="button" class="submit-btn" id="build-save-btn">Save combination</button>
+    <div class="filters" id="build-cat-filters" style="margin-top:4px;"></div>
+    <div class="build-rail" id="build-rail"></div>
+    <div id="build-saved-section"></div>
+  </div>
+</div>
+
+<script>
+const ICONS = {
+  sun: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+  cloud: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.5 18a4 4 0 1 1 .7-7.94A5.5 5.5 0 0 1 17.5 12 3.5 3.5 0 0 1 17 18.9"/></svg>',
+  rain: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.5 15a4 4 0 1 1 .7-7.94A5.5 5.5 0 0 1 17.5 9 3.5 3.5 0 0 1 17 15.9"/><path d="M8 19l-1 2M12 19l-1 2M16 19l-1 2"/></svg>',
+  storm: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.5 13a4 4 0 1 1 .7-7.94A5.5 5.5 0 0 1 17.5 7 3.5 3.5 0 0 1 17 13.9"/><path d="M13 14l-3 5h3l-2 4"/></svg>',
+};
+function weatherCategory(desc) {
+  const d = desc.toLowerCase();
+  if (d.includes('thunder')) return 'storm';
+  if (d.includes('rain') || d.includes('drizzle') || d.includes('shower')) return 'rain';
+  if (d.includes('clear')) return 'clear';
+  return 'cloud';
+}
+function weatherIcon(desc) {
+  const cat = weatherCategory(desc);
+  return cat === 'storm' ? ICONS.storm : cat === 'rain' ? ICONS.rain : cat === 'clear' ? ICONS.sun : ICONS.cloud;
+}
+const shuffleSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>';
+const deleteSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+const closeSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+const graveyardSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>';
+const restoreSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>';
+const flameSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c2 3-3 5-1 9 1-1 2-2 2-3 2 2 3 4 3 6a6 6 0 0 1-12 0c0-4 3-6 4-9 0 2 1 3 2 3 1-2 1-4 2-6z"/></svg>';
+const heartSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+
+const DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const WEATHERCODE_DESC = {
+  0: 'clear sky', 1: 'mostly clear', 2: 'partly cloudy', 3: 'overcast',
+  45: 'fog', 48: 'fog', 51: 'light drizzle', 53: 'drizzle', 55: 'heavy drizzle',
+  61: 'light rain', 63: 'rain', 65: 'heavy rain', 71: 'light snow', 73: 'snow',
+  75: 'heavy snow', 80: 'light showers', 81: 'showers', 82: 'violent showers',
+  95: 'thunderstorm', 96: 'thunderstorm with hail', 99: 'severe thunderstorm',
+};
+
+let CATALOG = [];
+let WEEK = [];          // next 16 days of real forecast (Open-Meteo's max range), keyed by date inside
+let WEEK_BY_DATE = {};  // date -> forecast day
+let selections = {};    // date -> { topIdx, bottomIdx }
+
+function eligible(category, season) {
+  return CATALOG.filter(c => c.category === category && c.season.includes(season) && !isInGraveyard(c.item_id));
+}
+function activeCatalog() { return CATALOG.filter(c => !isInGraveyard(c.item_id)); }
+function graveyardCatalog() { return CATALOG.filter(c => isInGraveyard(c.item_id)); }
+
+const CAT_ICONS = {
+  top: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 4 7v3h3v10h10V10h3V7l-4-3-2 2h-4z"/></svg>',
+  bottom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10l.5 6.5-.9 11.5h-3l-.6-9-.6 9h-3L8.5 9.5z"/><path d="M6.9 8h10.2"/></svg>',
+  outerwear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 6 5 3 8v4h3v9h12v-9h3V8l-3-3-3-2-1 2h-2z"/></svg>',
+  footwear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19v-4c2-.3 3-1.6 4.5-2.8a2 2 0 0 1 2-.2l1 .5c1.5.7 3 1 4.5 1H21v5.5a1 1 0 0 1-1 1H3z"/></svg>',
+  accessory: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l1 12H5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
+  special: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 14.7 8.6l6.6.6-5 4.4 1.5 6.5L12 16.9 6.2 20.1l1.5-6.5-5-4.4 6.6-.6z"/></svg>',
+};
+const CAT_LABELS_PLURAL = { top: 'Tops', bottom: 'Bottoms', outerwear: 'Outerwear', footwear: 'Shoes', accessory: 'Accessories', special: 'Special' };
+const ALL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
+
+const COLOR_SWATCHES = [
+  ['black', '#232020'], ['white', '#FAFAF7'], ['cream', '#F1E9D8'], ['ivory', '#F1E9D8'],
+  ['beige', '#DCCBA8'], ['khaki', '#B8A87C'], ['taupe', '#A9998A'], ['tan', '#C8A165'],
+  ['navy', '#1F2B4D'], ['blue', '#4A6FA5'], ['denim', '#3B5476'],
+  ['brown', '#6B4A34'], ['espresso', '#4A3527'], ['chestnut', '#7A4A2B'],
+  ['grey', '#8B8B85'], ['gray', '#8B8B85'],
+  ['pink', '#E8B4C0'], ['burgundy', '#6E2438'], ['wine', '#6E2438'], ['maroon', '#6E2438'],
+  ['green', '#5C6B4F'], ['sage', '#9CAA8C'], ['olive', '#6E7248'],
+  ['yellow', '#D8B24A'], ['mustard', '#C79A2E'], ['gold', '#B8963C'],
+  ['orange', '#C97A3D'], ['red', '#A23A32'],
+  ['lilac', '#C6B4D6'], ['purple', '#7B5C8A'], ['leopard', '#8A6E4B'],
+];
+function swatchFor(colorStr) {
+  const s = (colorStr || '').toLowerCase();
+  for (const [key, hex] of COLOR_SWATCHES) if (s.includes(key)) return { key, hex };
+  return { key: 'other', hex: '#B0AAA0' };
+}
+function itemById(id) { return CATALOG.find(c => c.item_id === id); }
+
+function suggestionFor(dateStr, day) {
+  const sel = selections[dateStr] || { topIdx: 0, bottomIdx: 0 };
+  const tops = eligible('top', day.season_bucket);
+  const bottoms = eligible('bottom', day.season_bucket);
+  return {
+    top: tops.length ? tops[sel.topIdx % tops.length] : null,
+    bottom: bottoms.length ? bottoms[sel.bottomIdx % bottoms.length] : null,
+  };
+}
+
+/* ---------- theme toggle ---------- */
+const THEME_KEY = 'capsule-week-theme';
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem(THEME_KEY, theme); } catch {}
+}
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem(THEME_KEY); } catch {}
+  if (saved) applyTheme(saved);
+})();
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme')
+    || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+/* ---------- bottom nav / screens ---------- */
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.screen').forEach(s => s.hidden = true);
+    document.getElementById('screen-' + btn.dataset.screen).hidden = false;
+  });
+});
+
+/* ---------- storage: local Gemini server + localStorage ---------- */
+const STORAGE_KEY = 'capsule-week-added-items';
+const DELETED_KEY = 'capsule-week-deleted-ids';
+const STATUS_KEY = 'capsule-week-item-status';
+const WEARLOG_KEY = 'capsule-week-wear-log';
+const DISPOSAL_KEY = 'capsule-week-disposal-log';
+
+function loadJSON(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+  catch { return fallback; }
+}
+function saveJSON(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); }
+  catch (err) { console.warn('Could not save to localStorage:', err); }
+}
+
+const loadAddedItems = () => loadJSON(STORAGE_KEY, []);
+const saveAddedItems = items => saveJSON(STORAGE_KEY, items);
+const loadDeletedIds = () => loadJSON(DELETED_KEY, []);
+const saveDeletedIds = ids => saveJSON(DELETED_KEY, ids);
+const loadItemStatus = () => loadJSON(STATUS_KEY, {});
+const saveItemStatus = map => saveJSON(STATUS_KEY, map);
+const loadWearLog = () => loadJSON(WEARLOG_KEY, {});
+const saveWearLog = log => saveJSON(WEARLOG_KEY, log);
+const loadDisposalLog = () => loadJSON(DISPOSAL_KEY, []);
+const saveDisposalLog = log => saveJSON(DISPOSAL_KEY, log);
+
+// Outfit-log photos from the server (backend-stored, re-fetched fresh on
+// every load) are kept here in memory rather than copied into localStorage -
+// 18+ full photos as base64 easily exceeds the ~5MB localStorage quota,
+// which silently fails the whole save and drops days at random. Local
+// wearLog stays for the user's own camera-logged days.
+let SERVER_OUTFIT_LOG = {};
+function mergedWearLog() {
+  // Backend-stored photos are a record of outfits already worn - only honor
+  // them for days strictly before today. Today and future days should fall
+  // through to the weather-based suggestion instead, even if a photo exists
+  // for that date, unless the user has genuinely logged today's own outfit
+  // via the camera (which lands in the local wearLog, not here).
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const pastServerLog = {};
+  for (const dateStr in SERVER_OUTFIT_LOG) {
+    if (dateStr < todayStr) pastServerLog[dateStr] = SERVER_OUTFIT_LOG[dateStr];
+  }
+  return { ...loadWearLog(), ...pastServerLog };
+}
+
+function isInGraveyard(itemId) { return loadItemStatus()[itemId] === 'graveyard'; }
+function wearCount(itemId) {
+  const log = mergedWearLog();
+  return Object.values(log).filter(entry => (entry.pieces || []).includes(itemId)).length;
+}
+function currentStreak() {
+  const log = mergedWearLog();
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    const dateStr = d.toISOString().slice(0, 10);
+    if (log[dateStr]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
+function deleteItem(itemId) {
+  if (!confirm('Remove this piece from your closet? This cannot be undone.')) return;
+  hardDelete(itemId);
+  renderAll();
+}
+function hardDelete(itemId) {
+  const deletedIds = loadDeletedIds();
+  if (!deletedIds.includes(itemId)) { deletedIds.push(itemId); saveDeletedIds(deletedIds); }
+  saveAddedItems(loadAddedItems().filter(i => i.item_id !== itemId));
+  const status = loadItemStatus();
+  delete status[itemId];
+  saveItemStatus(status);
+  CATALOG = CATALOG.filter(c => c.item_id !== itemId);
+}
+function sendToGraveyard(itemId) {
+  const status = loadItemStatus();
+  status[itemId] = 'graveyard';
+  saveItemStatus(status);
+  renderAll();
+}
+function restoreFromGraveyard(itemId) {
+  const status = loadItemStatus();
+  delete status[itemId];
+  saveItemStatus(status);
+  renderAll();
+}
+function disposeItem(itemId, action) {
+  const item = itemById(itemId);
+  if (!item) return;
+  if (!confirm(`Mark "${item.type}" as ${action}d and remove it for good?`)) return;
+  const log = loadDisposalLog();
+  log.push({ item_id: itemId, type: item.type, color: item.color, action, date: new Date().toISOString().slice(0, 10) });
+  saveDisposalLog(log);
+  hardDelete(itemId);
+  renderAll();
+}
+
+function renderAll() {
+  renderFilters();
+  renderCloset();
+  renderGraveyard();
+  renderInsights();
+  renderCalendar();
+  renderStreakRow();
+}
+
+/* ---------- closet + filters ---------- */
+let activeFilters = { cat: 'all', season: 'all' };
+
+function renderFilters() {
+  const el = document.getElementById('filters');
+  const options = [['all', 'All', ALL_ICON], ['top', 'Tops', CAT_ICONS.top], ['bottom', 'Bottoms', CAT_ICONS.bottom],
+    ['outerwear', 'Outerwear', CAT_ICONS.outerwear], ['footwear', 'Shoes', CAT_ICONS.footwear],
+    ['accessory', 'Accessories', CAT_ICONS.accessory], ['special', 'Special', CAT_ICONS.special]];
+  el.innerHTML = options.map(([val, label, icon]) => `
+    <button class="cat-icon-btn ${activeFilters.cat === val ? 'active' : ''}" data-val="${val}">
+      <span class="cat-icon-circle">${icon}</span>
+      <span class="cat-icon-label">${label}</span>
+    </button>
+  `).join('');
+  el.querySelectorAll('.cat-icon-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilters.cat = btn.dataset.val;
+      renderFilters();
+      renderCloset();
+    });
+  });
+
+  const wf = document.getElementById('weather-filter');
+  const wOptions = [['all', 'All'], ['summer', '&#9728;'], ['winter', '&#10052;']];
+  wf.innerHTML = wOptions.map(([val, label]) =>
+    `<button class="wf-btn ${activeFilters.season === val ? 'active' : ''}" data-val="${val}" title="${val === 'all' ? 'Any weather' : val === 'summer' ? 'Summer pieces' : 'Winter pieces'}">${label}</button>`
+  ).join('');
+  wf.querySelectorAll('.wf-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilters.season = btn.dataset.val;
+      renderFilters();
+      renderCloset();
+    });
+  });
+}
+
+function renderCloset() {
+  const grid = document.getElementById('closet-grid');
+  const active = activeCatalog();
+  const filtered = active.filter(c =>
+    (activeFilters.cat === 'all' || c.category === activeFilters.cat) &&
+    (activeFilters.season === 'all' || c.season.includes(activeFilters.season))
+  );
+  document.getElementById('closet-count').textContent = `${filtered.length} of ${active.length}`;
+  grid.innerHTML = filtered.map(c => `
+    <div class="item-card">
+      <div class="item-actions">
+        <button class="item-action" data-item-id="${c.item_id}" data-action="graveyard" title="Send to graveyard">${graveyardSVG}</button>
+        <button class="item-action" data-item-id="${c.item_id}" data-action="delete" title="Delete this piece">${deleteSVG}</button>
+      </div>
+      <img src="${c.photo}">
+      <div class="item-body">
+        <div class="item-type">${c.type}</div>
+        <div class="item-color">${c.color}</div>
+        <div class="tag-row">
+          <span class="tag cat${c.category === 'special' ? ' cat-special' : ''}">${c.category === 'special' ? 'special occasion' : c.category}</span>
+          ${c.season.map(s => `<span class="tag season-${s === 'summer' ? 'summer' : 'winter'}">${s === 'summer' ? '&#9728;' : '&#10052;'} ${s}</span>`).join('')}
+          ${wearCount(c.item_id) > 0 ? `<span class="tag worn">${wearCount(c.item_id)}&times;</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+  grid.querySelectorAll('.item-action').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.action === 'delete') deleteItem(btn.dataset.itemId);
+      else sendToGraveyard(btn.dataset.itemId);
+    });
+  });
+}
+
+function renderGraveyard() {
+  const grid = document.getElementById('graveyard-grid');
+  const items = graveyardCatalog();
+  document.getElementById('graveyard-count').textContent = `${items.length} piece${items.length === 1 ? '' : 's'}`;
+  grid.innerHTML = items.length ? items.map(c => `
+    <div class="item-card">
+      <div class="item-actions">
+        <button class="item-action" data-item-id="${c.item_id}" data-action="restore" title="Restore to closet">${restoreSVG}</button>
+      </div>
+      <img src="${c.photo}">
+      <div class="item-body">
+        <div class="item-type">${c.type}</div>
+        <div class="item-color">${c.color}</div>
+        <div class="graveyard-actions">
+          <button class="gy-btn donate" data-item-id="${c.item_id}">Donate</button>
+          <button class="gy-btn trash" data-item-id="${c.item_id}">Trash</button>
+        </div>
+      </div>
+    </div>
+  `).join('') : '<p class="insight-empty">Nothing here yet - send a piece over from the closet if you&rsquo;ve stopped wearing it.</p>';
+
+  grid.querySelectorAll('.item-action[data-action="restore"]').forEach(btn => btn.addEventListener('click', () => restoreFromGraveyard(btn.dataset.itemId)));
+  grid.querySelectorAll('.gy-btn.donate').forEach(btn => btn.addEventListener('click', () => disposeItem(btn.dataset.itemId, 'donate')));
+  grid.querySelectorAll('.gy-btn.trash').forEach(btn => btn.addEventListener('click', () => disposeItem(btn.dataset.itemId, 'trash')));
+}
+
+function renderInsights() {
+  const grid = document.getElementById('insights-grid');
+  const active = activeCatalog();
+  const counted = active.map(c => ({ item: c, count: wearCount(c.item_id) }));
+  const mostWorn = counted.filter(x => x.count > 0).sort((a, b) => b.count - a.count).slice(0, 3);
+  const neverWorn = counted.filter(x => x.count === 0);
+  const disposal = loadDisposalLog();
+  const donated = disposal.filter(d => d.action === 'donate').length;
+  const trashed = disposal.filter(d => d.action === 'trash').length;
+
+  grid.innerHTML = `
+    <div class="insight-card clickable" data-detail="worn">
+      <div class="insight-label">Most worn</div>
+      ${mostWorn.length ? mostWorn.map(x => `<div class="insight-row"><img src="${x.item.photo}"><span>${x.item.type} <b>${x.count}&times;</b></span></div>`).join('') : '<div class="insight-empty">Log an outfit to start tracking this.</div>'}
+    </div>
+    <div class="insight-card clickable" data-detail="unworn">
+      <div class="insight-label">Never worn</div>
+      <div class="insight-big">${neverWorn.length}</div>
+      <div class="insight-sub">of ${active.length} pieces &mdash; candidates for the graveyard</div>
+    </div>
+    <div class="insight-card clickable" data-detail="donate">
+      <div class="insight-label">Sent on</div>
+      <div class="insight-big">${donated + trashed}</div>
+      <div class="insight-sub">${donated} donated &middot; ${trashed} trashed</div>
+    </div>
+  `;
+  grid.querySelectorAll('.insight-card.clickable').forEach(card => {
+    card.addEventListener('click', () => openInsightsDetail(card.dataset.detail));
+  });
+}
+
+/* ---------- insights detail modal: unworn / donate candidates / most worn ---------- */
+const insightsDetailOverlay = document.getElementById('insights-detail-overlay');
+const insightsDetailBody = document.getElementById('insights-detail-body');
+document.getElementById('insights-detail-close').addEventListener('click', () => insightsDetailOverlay.hidden = true);
+insightsDetailOverlay.addEventListener('click', e => { if (e.target === insightsDetailOverlay) insightsDetailOverlay.hidden = true; });
+
+function openInsightsDetail(focusSection) {
+  renderInsightsDetail();
+  insightsDetailOverlay.hidden = false;
+  if (focusSection) {
+    const el = insightsDetailBody.querySelector(`[data-section="${focusSection}"]`);
+    if (el) el.scrollIntoView({ block: 'start' });
+  }
+}
+
+function renderInsightsDetail() {
+  const active = activeCatalog();
+  const counted = active.map(c => ({ item: c, count: wearCount(c.item_id) }));
+  const mostWorn = counted.filter(x => x.count > 0).sort((a, b) => b.count - a.count);
+  const neverWorn = counted.filter(x => x.count === 0).map(x => x.item);
+  const donateCandidates = graveyardCatalog();
+  const maxCount = mostWorn.length ? mostWorn[0].count : 1;
+  const wornPct = active.length ? Math.round((mostWorn.length / active.length) * 100) : 0;
+
+  const overviewStats = [['all', 'All', active.length]].concat(
+    Object.keys(CAT_ICONS).map(cat => [cat, CAT_LABELS_PLURAL[cat], active.filter(c => c.category === cat).length])
+  );
+  const overviewHtml = overviewStats.map(([cat, label, count]) => `
+    <div class="overview-stat">
+      <div class="overview-stat-icon">${cat === 'all' ? ALL_ICON : CAT_ICONS[cat]}</div>
+      <div class="overview-stat-num">${count}</div>
+      <div class="overview-stat-label">${label}</div>
+    </div>
+  `).join('');
+
+  const colorCounts = {};
+  active.forEach(c => {
+    const { key, hex } = swatchFor(c.color);
+    if (!colorCounts[key]) colorCounts[key] = { hex, count: 0, name: key };
+    colorCounts[key].count++;
+  });
+  const topColors = Object.values(colorCounts).sort((a, b) => b.count - a.count).slice(0, 6);
+  const colorsHtml = topColors.map(c => `
+    <div class="color-stat">
+      <div class="color-stat-swatch" style="background:${c.hex};"></div>
+      <div class="color-stat-pct">${Math.round(c.count / active.length * 100)}%</div>
+      <div class="color-stat-name">${c.name}</div>
+    </div>
+  `).join('');
+
+  const row = (c, extra) => `<div class="insight-row"><img src="${c.photo}"><span>${c.color} ${c.type}${extra || ''}</span></div>`;
+  const barRow = x => `
+    <div class="bar-row">
+      <img src="${x.item.photo}">
+      <div class="bar-row-main">
+        <div class="bar-row-label">${x.item.color} ${x.item.type}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.max(6, Math.round(x.count / maxCount * 100))}%"></div></div>
+      </div>
+      <span class="bar-count">${x.count}&times;</span>
+    </div>
+  `;
+
+  insightsDetailBody.innerHTML = `
+    <div class="insight-label">Wardrobe overview</div>
+    <div class="overview-row">${overviewHtml}</div>
+    <div class="insight-label" style="margin-top:16px;">Most popular colours</div>
+    <div class="color-row">${colorsHtml}</div>
+    <div class="insight-label" style="margin-top:18px;">Wear breakdown</div>
+    <div class="insight-donut-wrap">
+      <div class="insight-donut" style="background: conic-gradient(var(--good) 0% ${wornPct}%, var(--surface-sunk) ${wornPct}% 100%);">
+        <div class="insight-donut-hole">
+          <span class="insight-donut-num">${wornPct}%</span>
+          <span class="insight-donut-label">worn</span>
+        </div>
+      </div>
+      <div class="insight-donut-legend">
+        <div><span class="dot" style="background:var(--good)"></span>${mostWorn.length} worn at least once</div>
+        <div><span class="dot" style="background:var(--surface-sunk); border:1px solid var(--line);"></span>${neverWorn.length} never worn</div>
+        <div><span class="dot" style="background:var(--gold)"></span>${donateCandidates.length} in graveyard</div>
+      </div>
+    </div>
+    <div data-section="worn">
+      <div class="insight-label">Clothes you wear more (${mostWorn.length})</div>
+      ${mostWorn.length ? mostWorn.map(barRow).join('') : '<p class="insight-empty">Log some outfits to start tracking this.</p>'}
+    </div>
+    <div data-section="unworn" style="margin-top:18px;">
+      <div class="insight-label">Never worn (${neverWorn.length})</div>
+      ${neverWorn.length ? neverWorn.map(c => row(c)).join('') : '<p class="insight-empty">Everything in your closet has been worn at least once.</p>'}
+    </div>
+    <div data-section="donate" style="margin-top:18px;">
+      <div class="insight-label">Recommended to donate (${donateCandidates.length})</div>
+      ${donateCandidates.length ? donateCandidates.map(c => row(c)).join('') : '<p class="insight-empty">Nothing&rsquo;s in the graveyard right now &mdash; send an unworn piece there from the closet.</p>'}
+    </div>
+  `;
+}
+
+/* ---------- build an outfit from scratch ---------- */
+const CATEGORY_LABELS = { top: 'Top', bottom: 'Bottom', outerwear: 'Outerwear', footwear: 'Shoes', accessory: 'Accessory', special: 'Special' };
+const BUILD_CATEGORIES = ['top', 'bottom', 'outerwear', 'footwear', 'accessory', 'special'];
+let buildSelection = {};
+let buildActiveCat = 'top';
+const SAVED_OUTFITS_KEY = 'capsule-week-saved-outfits';
+const loadSavedOutfits = () => loadJSON(SAVED_OUTFITS_KEY, []);
+const saveSavedOutfits = list => saveJSON(SAVED_OUTFITS_KEY, list);
+
+const buildOverlay = document.getElementById('build-outfit-overlay');
+document.getElementById('build-outfit-close').addEventListener('click', () => buildOverlay.hidden = true);
+buildOverlay.addEventListener('click', e => { if (e.target === buildOverlay) buildOverlay.hidden = true; });
+document.getElementById('open-build-outfit').addEventListener('click', openBuildOutfit);
+
+function openBuildOutfit() {
+  buildSelection = {};
+  buildActiveCat = 'top';
+  renderBuildSlots();
+  renderBuildCatFilters();
+  renderBuildRail();
+  renderSavedOutfits();
+  buildOverlay.hidden = false;
+}
+
+function renderBuildSlots() {
+  const el = document.getElementById('build-slots');
+  el.innerHTML = BUILD_CATEGORIES.map(cat => {
+    const id = buildSelection[cat];
+    const item = id ? itemById(id) : null;
+    return `<div class="build-slot ${item ? 'filled' : ''}" data-cat="${cat}">
+      ${item ? `<img src="${item.photo}"><button type="button" class="slot-remove" data-cat="${cat}">${closeSVG}</button>` : `<span class="slot-label">${CATEGORY_LABELS[cat]}</span>`}
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.slot-remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      delete buildSelection[btn.dataset.cat];
+      renderBuildSlots();
+    });
+  });
+}
+
+function renderBuildCatFilters() {
+  const el = document.getElementById('build-cat-filters');
+  el.innerHTML = BUILD_CATEGORIES.map(cat => `
+    <button type="button" class="cat-icon-btn ${buildActiveCat === cat ? 'active' : ''}" data-cat="${cat}">
+      <span class="cat-icon-circle">${CAT_ICONS[cat]}</span>
+      <span class="cat-icon-label">${CATEGORY_LABELS[cat]}</span>
+    </button>
+  `).join('');
+  el.querySelectorAll('.cat-icon-btn').forEach(btn => {
+    btn.addEventListener('click', () => { buildActiveCat = btn.dataset.cat; renderBuildCatFilters(); renderBuildRail(); });
+  });
+}
+
+function renderBuildRail() {
+  const el = document.getElementById('build-rail');
+  const items = activeCatalog().filter(c => c.category === buildActiveCat);
+  el.innerHTML = items.length ? items.map(c => `
+    <div class="build-rail-item ${buildSelection[buildActiveCat] === c.item_id ? 'selected' : ''}" data-item-id="${c.item_id}">
+      <img src="${c.photo}">
+      <span>${c.type}</span>
+    </div>
+  `).join('') : '<span class="insight-empty">No pieces in this category yet.</span>';
+  el.querySelectorAll('.build-rail-item').forEach(rowEl => {
+    rowEl.addEventListener('click', () => {
+      buildSelection[buildActiveCat] = rowEl.dataset.itemId;
+      renderBuildSlots();
+      renderBuildRail();
+    });
+  });
+}
+
+document.getElementById('build-save-btn').addEventListener('click', () => {
+  const pieces = Object.values(buildSelection);
+  if (!pieces.length) return;
+  const saved = loadSavedOutfits();
+  saved.unshift({ id: 'outfit-' + Date.now().toString(36), pieces, created_at: new Date().toISOString().slice(0, 10) });
+  saveSavedOutfits(saved);
+  renderSavedOutfits();
+});
+
+function renderSavedOutfits() {
+  const el = document.getElementById('build-saved-section');
+  const saved = loadSavedOutfits();
+  if (!saved.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="insight-label" style="margin-top:14px;">Saved combinations</div>` + saved.map(o => {
+    const items = o.pieces.map(id => itemById(id)).filter(Boolean);
+    return `<div class="build-saved-row">
+      <div class="saved-thumbs">${items.map(i => `<img src="${i.photo}">`).join('')}</div>
+      <span class="saved-date">${o.created_at}</span>
+      <button type="button" class="pending-remove" data-id="${o.id}" title="Delete">${closeSVG}</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.pending-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      saveSavedOutfits(loadSavedOutfits().filter(o => o.id !== btn.dataset.id));
+      renderSavedOutfits();
+    });
+  });
+}
+
+function renderStreakRow() {
+  const row = document.getElementById('streak-row');
+  const active = activeCatalog();
+  const counted = active.map(c => ({ item: c, count: wearCount(c.item_id) })).filter(x => x.count > 0).sort((a, b) => b.count - a.count);
+  const top = counted[0];
+  const streak = currentStreak();
+  row.innerHTML = `
+    <div class="streak-card">
+      ${top ? `<img src="${top.item.photo}">` : `<div class="streak-icon">${heartSVG}</div>`}
+      <div><div class="streak-num">${top ? top.count : 0}${top ? '&times;' : ''}</div><div class="streak-label">Most worn</div></div>
+    </div>
+    <div class="streak-card">
+      <div class="streak-icon">${flameSVG}</div>
+      <div><div class="streak-num">${streak} day${streak === 1 ? '' : 's'}</div><div class="streak-label">Logging streak</div></div>
+    </div>
+  `;
+}
+
+/* ---------- weather + catalog loading ---------- */
+async function fetchWeek(city) {
+  const geoUrl = 'https://geocoding-api.open-meteo.com/v1/search?' + new URLSearchParams({ name: city, count: 1 });
+  const geo = await (await fetch(geoUrl)).json();
+  const place = geo.results && geo.results[0];
+  if (!place) throw new Error(`could not find "${city}"`);
+  const foreUrl = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
+    latitude: place.latitude, longitude: place.longitude,
+    daily: 'temperature_2m_max,temperature_2m_min,weathercode',
+    timezone: place.timezone || 'auto', forecast_days: 16,
+  });
+  const daily = (await (await fetch(foreUrl)).json()).daily;
+  return daily.time.map((date, i) => ({
+    date,
+    temp_max_c: daily.temperature_2m_max[i],
+    temp_min_c: daily.temperature_2m_min[i],
+    weather: WEATHERCODE_DESC[daily.weathercode[i]] || `code ${daily.weathercode[i]}`,
+    season_bucket: daily.temperature_2m_max[i] >= 24 ? 'summer' : 'winter',
+  }));
+}
+
+function shiftYears(dateStr, delta) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setFullYear(d.getFullYear() + delta);
+  return d.toISOString().slice(0, 10);
+}
+
+const RAIN_CODES = new Set([51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99]);
+
+// For trip dates beyond Open-Meteo's 16-day forecast, there's no real
+// forecast yet - so instead of guessing, pull actual historical weather for
+// the same calendar dates from the last 2 years (Open-Meteo's free archive
+// API) and average them, as a "what's this month usually like here" estimate.
+async function fetchHistoricalClimate(lat, lon, dates, timezone) {
+  const yearsBack = [1, 2];
+  const perYear = await Promise.all(yearsBack.map(async (back) => {
+    const shifted = dates.map(d => shiftYears(d, -back));
+    try {
+      const url = 'https://archive-api.open-meteo.com/v1/archive?' + new URLSearchParams({
+        latitude: lat, longitude: lon,
+        start_date: shifted[0], end_date: shifted[shifted.length - 1],
+        daily: 'temperature_2m_max,temperature_2m_min,weathercode',
+        timezone: timezone || 'auto',
+      });
+      const daily = (await (await fetch(url)).json()).daily;
+      if (!daily || !daily.time) return {};
+      const byDate = {};
+      daily.time.forEach((date, i) => {
+        byDate[date] = { temp_max_c: daily.temperature_2m_max[i], weathercode: daily.weathercode[i] };
+      });
+      return byDate;
+    } catch (err) {
+      console.warn('Historical weather fetch failed:', err);
+      return {};
+    }
+  }));
+
+  const result = {};
+  dates.forEach(date => {
+    const samples = yearsBack
+      .map((back, i) => perYear[i][shiftYears(date, -back)])
+      .filter(Boolean);
+    if (!samples.length) return;
+    const avgMax = samples.reduce((s, r) => s + r.temp_max_c, 0) / samples.length;
+    const anyRain = samples.some(r => RAIN_CODES.has(r.weathercode));
+    const repCode = samples[0].weathercode;
+    result[date] = {
+      temp_max_c: avgMax,
+      weather: anyRain && !RAIN_CODES.has(repCode) ? 'sometimes rainy' : (WEATHERCODE_DESC[repCode] || 'typical conditions'),
+    };
+  });
+  return result;
+}
+
+async function loadCatalogFromServer() {
+  try {
+    const res = await fetch('/api/drive/catalog');
+    const data = await res.json();
+    return data.catalog || [];
+  } catch (err) {
+    console.warn('Could not reach the local server for the Drive catalog:', err);
+    return [];
+  }
+}
+
+function rebuildCatalog(driveCatalog) {
+  const deletedIds = loadDeletedIds();
+  CATALOG = driveCatalog.concat(loadAddedItems()).filter(c => !deletedIds.includes(c.item_id));
+}
+
+async function loadServerOutfitLog() {
+  try {
+    const res = await fetch('/api/outfit-log');
+    const data = await res.json();
+    return data.log || {};
+  } catch (err) {
+    console.warn('Could not reach the local server for the outfit log:', err);
+    return {};
+  }
+}
+
+function adoptServerOutfitLog(serverLog) {
+  SERVER_OUTFIT_LOG = serverLog;
+  // One-time cleanup: earlier versions of this app copied these photos into
+  // localStorage, which silently drops entries once the quota is hit (that's
+  // why some days went missing from the calendar). Server-covered dates are
+  // now kept in memory only, so clear out any leftover local copies.
+  const dates = Object.keys(serverLog);
+  if (!dates.length) return;
+  const wlog = loadWearLog();
+  let changed = false;
+  dates.forEach(dateStr => {
+    if (wlog[dateStr]) { delete wlog[dateStr]; changed = true; }
+  });
+  if (changed) saveWearLog(wlog);
+}
+
+async function init() {
+  const [driveCatalog, week, serverOutfitLog] = await Promise.all([
+    loadCatalogFromServer(),
+    fetchWeek('Pune').catch(err => { console.warn('Weather fetch failed:', err); return []; }),
+    loadServerOutfitLog(),
+  ]);
+
+  rebuildCatalog(driveCatalog);
+  adoptServerOutfitLog(serverOutfitLog);
+  WEEK = week;
+  WEEK_BY_DATE = {};
+  WEEK.forEach((day, i) => {
+    WEEK_BY_DATE[day.date] = day;
+    // Latin-square-style stride: topIdx cycles at its own length, bottomIdx
+    // is offset by how many times topIdx has already wrapped around, so a
+    // top+bottom PAIR only repeats once every (tops.length * bottoms.length)
+    // days instead of every (tops.length) days - avoids the same outfit (or
+    // even just the same top) showing up every few days when the closet
+    // only has a handful of eligible pieces for that season.
+    const topsLen = eligible('top', day.season_bucket).length || 1;
+    selections[day.date] = { topIdx: i, bottomIdx: i + Math.floor(i / topsLen) };
+  });
+
+  renderAll();
+  document.getElementById('footer-note').textContent =
+    `Wardrobe: ${CATALOG.length} pieces, synced from Google Drive. Weather: live Open-Meteo forecast for Pune.`;
+}
+init();
+
+const driveSyncBtn = document.getElementById('drive-sync-btn');
+const driveSyncStatus = document.getElementById('drive-sync-status');
+driveSyncBtn.addEventListener('click', async () => {
+  driveSyncBtn.disabled = true;
+  driveSyncBtn.textContent = 'Syncing...';
+  driveSyncStatus.textContent = '';
+  try {
+    const res = await fetch('/api/drive/sync', { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'sync failed');
+    rebuildCatalog(data.catalog || []);
+    renderAll();
+    const remaining = (data.total_in_drive || 0) - (data.catalog || []).length;
+    if (data.quota_hit) driveSyncStatus.textContent = `Added ${data.newly_classified} new. Quota ran out - ${Math.max(remaining, 0)} left.`;
+    else if (data.newly_classified > 0) driveSyncStatus.textContent = `Added ${data.newly_classified} new piece${data.newly_classified > 1 ? 's' : ''}.`;
+    else driveSyncStatus.textContent = 'Already up to date.';
+  } catch (err) {
+    driveSyncStatus.textContent = err.message || 'Could not sync - is server.py running?';
+  } finally {
+    driveSyncBtn.disabled = false;
+    driveSyncBtn.textContent = 'Sync with Drive';
+  }
+});
+
+/* ---------- calendar (merged: past logs + upcoming suggestions) ---------- */
+let calendarMonth = new Date();
+calendarMonth.setDate(1);
+
+function renderCalendar() {
+  const grid = document.getElementById('calendar-grid');
+  const log = mergedWearLog();
+  const year = calendarMonth.getFullYear(), month = calendarMonth.getMonth();
+  document.getElementById('cal-month-label').textContent =
+    calendarMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+
+  const startOffset = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  const cells = [];
+  for (let i = 0; i < startOffset; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+  const dowRow = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+  const dayCells = cells.map(d => {
+    if (d === null) return '<div class="cal-day empty"></div>';
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const entry = log[dateStr];
+    const forecastDay = WEEK_BY_DATE[dateStr];
+    let inner = '';
+    let cls = '';
+    if (entry && entry.photo) {
+      inner = `<img class="full" src="${entry.photo}">`;
+      cls = 'has-log';
+    } else if (entry) {
+      inner = '<span class="cal-dot"></span>';
+      cls = 'has-log';
+    } else if (forecastDay) {
+      const s = suggestionFor(dateStr, forecastDay);
+      if (s.top || s.bottom) {
+        inner = `<div class="cal-suggest-pair">${s.top ? `<img src="${s.top.photo}">` : ''}${s.bottom ? `<img src="${s.bottom.photo}">` : ''}</div>`;
+        cls = 'has-suggestion';
+      }
+    }
+    return `<div class="cal-day ${cls} ${dateStr === todayStr ? 'today' : ''}" data-date="${dateStr}">
+      <span class="cal-date-num">${d}</span>
+      ${inner}
+    </div>`;
+  }).join('');
+
+  grid.innerHTML = dowRow + dayCells;
+  grid.querySelectorAll('.cal-day[data-date]').forEach(cell => {
+    cell.addEventListener('click', () => showDayModal(cell.dataset.date));
+  });
+}
+
+document.getElementById('cal-prev').addEventListener('click', () => { calendarMonth.setMonth(calendarMonth.getMonth() - 1); renderCalendar(); });
+document.getElementById('cal-next').addEventListener('click', () => { calendarMonth.setMonth(calendarMonth.getMonth() + 1); renderCalendar(); });
+
+const dayModalOverlay = document.getElementById('day-modal-overlay');
+const dayModalTitle = document.getElementById('day-modal-title');
+const dayModalBody = document.getElementById('day-modal-body');
+document.getElementById('day-modal-close').addEventListener('click', () => dayModalOverlay.hidden = true);
+dayModalOverlay.addEventListener('click', e => { if (e.target === dayModalOverlay) dayModalOverlay.hidden = true; });
+
+function showDayModal(dateStr) {
+  const log = mergedWearLog();
+  const entry = log[dateStr];
+  const dateLabel = new Date(dateStr + 'T00:00:00').toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  dayModalTitle.textContent = dateLabel;
+
+  if (entry) {
+    const pieces = (entry.pieces || []).map(id => itemById(id)).filter(Boolean);
+    const piecesText = entry.pieces_text || [];
+    let piecesHtml;
+    if (pieces.length || piecesText.length) {
+      piecesHtml = pieces.map(p => `<div class="insight-row"><img src="${p.photo}"><span>${p.color} ${p.type}</span></div>`).join('')
+        + piecesText.map(t => `<div class="insight-row"><span class="piece-text-only">${t}</span></div>`).join('');
+    } else {
+      piecesHtml = '<p class="insight-empty">No pieces tagged for this day.</p>';
+    }
+    dayModalBody.innerHTML = `
+      <div class="day-detail-photo" style="margin-bottom:12px;">${entry.photo ? `<img src="${entry.photo}">` : '<div class="no-photo">No photo</div>'}</div>
+      ${piecesHtml}
+      <button type="button" class="submit-btn" id="day-share-btn" style="margin-top:10px;">Export as image</button>
+    `;
+    dayModalOverlay.hidden = false;
+    document.getElementById('day-share-btn').addEventListener('click', () => exportDayImage(dateStr, dateLabel, entry, pieces, piecesText));
+    return;
+  }
+
+  const forecastDay = WEEK_BY_DATE[dateStr];
+  if (forecastDay) {
+    const s = suggestionFor(dateStr, forecastDay);
+    dayModalBody.innerHTML = `
+      <div class="weather-badge weather-${weatherCategory(forecastDay.weather)}">
+        ${weatherIcon(forecastDay.weather)}
+        <div class="weather-main"><span class="temp-big">${Math.round(forecastDay.temp_max_c)}&deg;C</span><span class="weather-desc">${forecastDay.weather}</span></div>
+        <span class="temp-range">/${Math.round(forecastDay.temp_min_c)}&deg;</span>
+      </div>
+      <div class="suggest-pieces">
+        <div class="suggest-piece" data-role="top">${s.top ? `<img src="${s.top.photo}"><button class="shuffle-btn" data-role="top">${shuffleSVG}</button><div class="label">${s.top.color} <span class="color">${s.top.type}</span></div>` : '<div class="label">no match</div>'}</div>
+        <div class="suggest-piece" data-role="bottom">${s.bottom ? `<img src="${s.bottom.photo}"><button class="shuffle-btn" data-role="bottom">${shuffleSVG}</button><div class="label">${s.bottom.color} <span class="color">${s.bottom.type}</span></div>` : '<div class="label">no match</div>'}</div>
+      </div>
+      <button type="button" class="submit-btn" id="log-suggestion-btn" style="margin-top:12px;">Log this as worn</button>
+    `;
+    dayModalOverlay.hidden = false;
+    dayModalBody.querySelectorAll('.shuffle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sel = selections[dateStr];
+        if (btn.dataset.role === 'top') sel.topIdx++; else sel.bottomIdx++;
+        showDayModal(dateStr);
+        renderCalendar();
+      });
+    });
+    document.getElementById('log-suggestion-btn').addEventListener('click', () => {
+      const cur = suggestionFor(dateStr, forecastDay);
+      const pieces = [cur.top, cur.bottom].filter(Boolean).map(p => p.item_id);
+      const wlog = loadWearLog();
+      wlog[dateStr] = { photo: (wlog[dateStr] && wlog[dateStr].photo) || null, pieces };
+      saveWearLog(wlog);
+      renderInsights(); renderCloset(); renderCalendar(); renderStreakRow();
+      dayModalOverlay.hidden = true;
+    });
+    return;
+  }
+
+  dayModalBody.innerHTML = `<p class="insight-empty">No outfit logged for ${dateLabel}, and it&rsquo;s outside this week&rsquo;s forecast.</p>`;
+  dayModalOverlay.hidden = false;
+}
+
+function loadImageEl(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+async function exportDayImage(dateStr, dateLabel, entry, pieces, piecesText) {
+  piecesText = piecesText || [];
+  const W = 720;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const photoImg = entry.photo ? await loadImageEl(entry.photo) : null;
+  const photoH = photoImg ? Math.min(520, (W - 60) * photoImg.height / photoImg.width) : 0;
+  const pieceRowH = 66;
+  const textRowH = 26;
+  const H = 110 + (photoImg ? photoH + 30 : 0) + 40 + pieces.length * pieceRowH + piecesText.length * textRowH + 30;
+  canvas.width = W; canvas.height = H;
+  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#201D1A'; ctx.font = '600 26px Georgia, serif'; ctx.fillText('Capsule Week', 30, 46);
+  ctx.font = '13px monospace'; ctx.fillStyle = '#726B60'; ctx.fillText(dateLabel, 30, 68);
+  let y = 100;
+  if (photoImg) { ctx.drawImage(photoImg, 30, y, W - 60, photoH); y += photoH + 30; }
+  ctx.fillStyle = '#201D1A'; ctx.font = '600 15px Georgia, serif'; ctx.fillText('Pieces worn', 30, y); y += 20;
+  for (const p of pieces) {
+    const img = await loadImageEl(p.photo);
+    if (img) ctx.drawImage(img, 30, y, 56, 56);
+    ctx.fillStyle = '#201D1A'; ctx.font = '14px -apple-system, sans-serif'; ctx.fillText(`${p.color} ${p.type}`, 100, y + 32);
+    y += pieceRowH;
+  }
+  for (const t of piecesText) {
+    ctx.fillStyle = '#726B60'; ctx.font = 'italic 14px -apple-system, sans-serif'; ctx.fillText(t, 30, y + 16);
+    y += textRowH;
+  }
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `outfit-${dateStr}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  });
+}
+
+/* ---------- add-a-piece modal: multi-photo upload via local Gemini server ---------- */
+const addPieceOverlay = document.getElementById('add-piece-overlay');
+document.getElementById('open-add-piece').addEventListener('click', () => addPieceOverlay.hidden = false);
+document.getElementById('add-piece-close').addEventListener('click', () => addPieceOverlay.hidden = true);
+addPieceOverlay.addEventListener('click', e => { if (e.target === addPieceOverlay) addPieceOverlay.hidden = true; });
+
+const fileInput = document.getElementById('upload-file');
+const fileDropText = document.getElementById('file-drop-text');
+const pendingListEl = document.getElementById('pending-list');
+const uploadStatus = document.getElementById('upload-status');
+const uploadSubmit = document.getElementById('upload-submit');
+
+let pending = [];
+let pendingCounter = 0;
+uploadStatus.textContent = 'Choose one or more photos and Gemini will classify each.';
+
+function renderPending() {
+  pendingListEl.innerHTML = pending.map(p => `
+    <div class="pending-item">
+      <img src="${p.dataUrl || ''}">
+      ${p.status === 'loading' ? '<span class="pending-status">Looking at the photo...</span>' : ''}
+      ${p.status === 'error' ? `<span class="pending-status">${p.errorMsg}</span>` : ''}
+      ${p.status === 'done' ? `<div class="detected-row">
+        <span class="tag cat">${p.detected.category}</span>
+        <span class="tag season-${p.detected.season}">${p.detected.season}</span>
+        <span class="tag cat">${p.detected.color}</span>
+        <span class="tag cat">${p.detected.type}</span>
+      </div>` : ''}
+      <button type="button" class="pending-remove" data-id="${p.id}" title="Remove">${closeSVG}</button>
+    </div>
+  `).join('');
+  pendingListEl.querySelectorAll('.pending-remove').forEach(btn => {
+    btn.addEventListener('click', () => { pending = pending.filter(p => p.id !== btn.dataset.id); renderPending(); updateUploadUi(); });
+  });
+}
+
+function updateUploadUi() {
+  const readyCount = pending.filter(p => p.status === 'done').length;
+  uploadSubmit.disabled = readyCount === 0;
+  uploadSubmit.textContent = readyCount > 1 ? `Add ${readyCount} to closet` : 'Add to closet';
+  if (pending.length === 0) uploadStatus.textContent = 'Choose one or more photos and Gemini will classify each.';
+  else if (pending.some(p => p.status === 'loading')) uploadStatus.textContent = `Looking at ${pending.filter(p => p.status === 'loading').length} photo(s)...`;
+  else if (readyCount > 0) uploadStatus.textContent = 'Looks right? Add below.';
+  else uploadStatus.textContent = 'Could not classify those photos - try again.';
+}
+
+fileInput.addEventListener('change', () => {
+  const files = Array.from(fileInput.files);
+  if (!files.length) return;
+  fileDropText.textContent = files.length > 1 ? `${files.length} photos selected` : files[0].name;
+  fileDropText.style.background = 'rgba(255,255,255,0.85)';
+  fileDropText.style.padding = '2px 8px';
+  fileDropText.style.borderRadius = '999px';
+
+  files.forEach(file => {
+    const entry = { id: 'p' + (pendingCounter++), dataUrl: null, status: 'loading', detected: null, errorMsg: '' };
+    pending.push(entry);
+    const reader = new FileReader();
+    reader.onload = () => { entry.dataUrl = reader.result; renderPending(); };
+    reader.readAsDataURL(file);
+    (async () => {
+      try {
+        const form = new FormData();
+        form.append('photo', file);
+        const res = await fetch('/api/classify', { method: 'POST', body: form });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'classification failed');
+        entry.status = 'done'; entry.detected = result;
+      } catch (err) {
+        entry.status = 'error';
+        entry.errorMsg = (err instanceof TypeError) ? 'Could not reach the local server' : (err.message || 'Could not classify - try again');
+      }
+      renderPending(); updateUploadUi();
+    })();
+  });
+  renderPending(); updateUploadUi();
+  fileInput.value = '';
+});
+
+document.getElementById('upload-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const ready = pending.filter(p => p.status === 'done');
+  if (!ready.length) return;
+  const added = loadAddedItems();
+  ready.forEach(p => {
+    const item_id = (p.detected.type + '-' + p.detected.color).toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const newItem = {
+      item_id, category: p.detected.category, type: p.detected.type, color: p.detected.color,
+      secondary_colors: [], pattern: 'solid', season: [p.detected.season], occasion: ['casual'],
+      style_tags: [p.detected.type], confidence: 1, notes: 'added via local Gemini server', photo: p.dataUrl,
+    };
+    CATALOG.push(newItem); added.push(newItem);
+  });
+  saveAddedItems(added);
+  const addedCount = ready.length;
+  pending = pending.filter(p => p.status === 'loading');
+  renderAll(); renderPending(); updateUploadUi();
+  e.target.reset();
+  fileDropText.textContent = 'Choose one or more photos';
+  fileDropText.style.background = '';
+  uploadStatus.textContent = `Added ${addedCount} piece${addedCount > 1 ? 's' : ''}.`;
+  addPieceOverlay.hidden = true;
+});
+
+/* ---------- daily outfit camera log modal ---------- */
+const fabCamera = document.getElementById('nav-fab-camera');
+const outfitModalOverlay = document.getElementById('outfit-modal-overlay');
+const outfitPhotoDrop = document.getElementById('outfit-photo-drop');
+const outfitPhotoInput = document.getElementById('outfit-photo-input');
+const outfitPhotoText = document.getElementById('outfit-photo-text');
+const piecePickerEl = document.getElementById('piece-picker');
+const outfitSaveBtn = document.getElementById('outfit-save-btn');
+
+let outfitPhotoDataUrl = null;
+let outfitSelectedPieces = new Set();
+
+function renderPiecePicker() {
+  const active = activeCatalog();
+  piecePickerEl.innerHTML = active.length ? active.map(c => `
+    <button type="button" class="piece-chip ${outfitSelectedPieces.has(c.item_id) ? 'selected' : ''}" data-item-id="${c.item_id}">
+      <img src="${c.photo}"><span>${c.type}</span>
+    </button>
+  `).join('') : '<span class="insight-empty">No pieces in your closet yet.</span>';
+  piecePickerEl.querySelectorAll('.piece-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.itemId;
+      if (outfitSelectedPieces.has(id)) { outfitSelectedPieces.delete(id); btn.classList.remove('selected'); }
+      else { outfitSelectedPieces.add(id); btn.classList.add('selected'); }
+    });
+  });
+}
+
+function openOutfitModal() {
+  outfitPhotoDataUrl = null;
+  outfitSelectedPieces = new Set();
+  outfitPhotoText.textContent = 'Take or choose a photo';
+  outfitPhotoDrop.querySelectorAll('img.preview').forEach(el => el.remove());
+  renderPiecePicker();
+  outfitModalOverlay.hidden = false;
+}
+fabCamera.addEventListener('click', openOutfitModal);
+document.getElementById('outfit-modal-close').addEventListener('click', () => outfitModalOverlay.hidden = true);
+outfitModalOverlay.addEventListener('click', e => { if (e.target === outfitModalOverlay) outfitModalOverlay.hidden = true; });
+
+outfitPhotoInput.addEventListener('change', () => {
+  const file = outfitPhotoInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    outfitPhotoDataUrl = reader.result;
+    outfitPhotoDrop.querySelectorAll('img.preview').forEach(el => el.remove());
+    const img = document.createElement('img');
+    img.className = 'preview'; img.src = outfitPhotoDataUrl;
+    outfitPhotoDrop.prepend(img);
+  };
+  reader.readAsDataURL(file);
+  outfitPhotoText.textContent = file.name;
+  outfitPhotoText.style.background = 'rgba(255,255,255,0.85)';
+  outfitPhotoText.style.padding = '2px 8px';
+  outfitPhotoText.style.borderRadius = '999px';
+});
+
+outfitSaveBtn.addEventListener('click', () => {
+  const dateStr = new Date().toISOString().slice(0, 10);
+  const log = loadWearLog();
+  log[dateStr] = { photo: outfitPhotoDataUrl, pieces: Array.from(outfitSelectedPieces) };
+  saveWearLog(log);
+  outfitModalOverlay.hidden = true;
+  renderInsights(); renderCloset(); renderCalendar(); renderStreakRow();
+});
+
+/* ---------- packing list ---------- */
+document.getElementById('packing-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const destination = document.getElementById('pack-destination').value.trim();
+  const startStr = document.getElementById('pack-start').value;
+  const endStr = document.getElementById('pack-end').value;
+  const status = document.getElementById('packing-status');
+  const result = document.getElementById('packing-result');
+  if (!destination || !startStr || !endStr) return;
+
+  const start = new Date(startStr + 'T00:00:00');
+  const end = new Date(endStr + 'T00:00:00');
+  if (end < start) { status.textContent = 'End date must be on or after the start date.'; return; }
+
+  status.textContent = 'Checking the forecast...';
+  result.innerHTML = '';
+  try {
+    const geoUrl = 'https://geocoding-api.open-meteo.com/v1/search?' + new URLSearchParams({ name: destination, count: 1 });
+    const geo = await (await fetch(geoUrl)).json();
+    const place = geo.results && geo.results[0];
+    if (!place) throw new Error(`Could not find "${destination}" - try a different spelling.`);
+
+    const foreUrl = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
+      latitude: place.latitude, longitude: place.longitude,
+      daily: 'temperature_2m_max,temperature_2m_min,weathercode',
+      timezone: place.timezone || 'auto', forecast_days: 16,
+    });
+    const daily = (await (await fetch(foreUrl)).json()).daily;
+
+    const forecastByDate = {};
+    daily.time.forEach((date, i) => {
+      forecastByDate[date] = { temp_max_c: daily.temperature_2m_max[i], weather: WEATHERCODE_DESC[daily.weathercode[i]] || `code ${daily.weathercode[i]}` };
+    });
+
+    const tripDates = [];
+    for (const d = new Date(start); d <= end && tripDates.length < 14; d.setDate(d.getDate() + 1)) tripDates.push(d.toISOString().slice(0, 10));
+
+    const tripDays = tripDates.map(date => {
+      const f = forecastByDate[date];
+      return f ? { date, temp_max_c: f.temp_max_c, weather: f.weather, season_bucket: f.temp_max_c >= 24 ? 'summer' : 'winter' }
+                : { date, temp_max_c: null, weather: null, season_bucket: null };
+    });
+
+    const beyondForecast = tripDays.filter(d => d.season_bucket === null).map(d => d.date);
+    if (beyondForecast.length) {
+      status.textContent = 'Forecast doesn&rsquo;t reach that far - checking past years&rsquo; weather for those dates...';
+      const climate = await fetchHistoricalClimate(place.latitude, place.longitude, beyondForecast, place.timezone);
+      tripDays.forEach(d => {
+        const est = climate[d.date];
+        if (d.season_bucket === null && est) {
+          d.temp_max_c = est.temp_max_c;
+          d.weather = est.weather;
+          d.season_bucket = est.temp_max_c >= 24 ? 'summer' : 'winter';
+          d.estimated = true;
+        } else if (d.season_bucket === null) {
+          d.weather = 'no data available';
+        }
+      });
+    }
+
+    renderPackingResult(destination, tripDays);
+    status.textContent = '';
+  } catch (err) {
+    status.textContent = err.message || 'Could not fetch the forecast - try again.';
+  }
+});
+
+function renderPackingResult(destination, tripDays) {
+  const result = document.getElementById('packing-result');
+  const known = tripDays.filter(d => d.season_bucket);
+  const summerDays = known.filter(d => d.season_bucket === 'summer').length;
+  const winterDays = known.filter(d => d.season_bucket === 'winter').length;
+  const estimatedDays = tripDays.filter(d => d.estimated).length;
+  const noDataDays = tripDays.filter(d => !d.season_bucket).length;
+  const anyRain = known.some(d => /rain|drizzle|shower|thunder/.test(d.weather));
+  const dominant = summerDays >= winterDays ? 'summer' : 'winter';
+
+  // Footwear and accessories cover every season actually present on the
+  // trip (not just the dominant one), so a mostly-warm trip with a couple of
+  // cool days still gets warm shoes/accessories packed alongside the
+  // sandals - not just extra tops.
+  const neededSeasons = [];
+  if (summerDays > 0) neededSeasons.push('summer');
+  if (winterDays > 0) neededSeasons.push('winter');
+  const packBySeason = (category, limit) => {
+    const seen = new Set();
+    const out = [];
+    neededSeasons.forEach(season => {
+      eligible(category, season).forEach(item => {
+        if (!seen.has(item.item_id)) { seen.add(item.item_id); out.push(item); }
+      });
+    });
+    return out.slice(0, limit);
+  };
+
+  // One top AND one bottom per day of the trip - no fractional re-wear math.
+  const packTops = eligible('top', dominant).slice(0, tripDays.length);
+  const packBottoms = eligible('bottom', dominant).slice(0, tripDays.length);
+  const packFootwear = packBySeason('footwear', Math.max(1, Math.ceil(tripDays.length * 0.25) + (winterDays > 0 && summerDays > 0 ? 1 : 0)));
+  const packAccessories = packBySeason('accessory', Math.max(2, Math.ceil(tripDays.length * 0.3) + (winterDays > 0 && summerDays > 0 ? 1 : 0)));
+  const packOuterwear = winterDays > 0 ? eligible('outerwear', 'winter').slice(0, 2) : [];
+
+  const essentials = [];
+  if (anyRain) essentials.push('Umbrella or a rain jacket');
+  if (winterDays > 0) essentials.push('A warm layer, warm shoes, and cold-weather accessories for cooler days and evenings');
+  if (summerDays > 0) essentials.push('Sunscreen and sunglasses');
+  if (estimatedDays > 0) essentials.push(`${estimatedDays} day${estimatedDays === 1 ? '' : 's'} beyond the 16-day forecast - estimated from the last 2 years' weather on those dates.`);
+  if (noDataDays > 0) essentials.push(`${noDataDays} day${noDataDays === 1 ? '' : 's'} have no forecast or historical data available.`);
+
+  const pieceSection = (label, items, emptyText) => `
+    <div class="insight-card">
+      <div class="insight-label">${label} (${items.length})</div>
+      ${items.length ? items.map(p => `<div class="insight-row"><img src="${p.photo}"><span>${p.color} ${p.type}</span></div>`).join('') : `<div class="insight-empty">${emptyText}</div>`}
+    </div>
+  `;
+
+  result.innerHTML = `
+    <div class="packing-summary">
+      <h3>${tripDays.length}-day trip to ${destination}</h3>
+      <p class="add-help">${summerDays} warm day${summerDays === 1 ? '' : 's'}, ${winterDays} cool day${winterDays === 1 ? '' : 's'}${anyRain ? ', with some rain expected' : ''}.</p>
+    </div>
+    <div class="packing-days">
+      ${tripDays.map(d => `<div class="packing-day ${d.estimated ? 'estimated' : ''}"><span class="packing-day-date">${new Date(d.date + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span><span class="packing-day-weather">${d.temp_max_c !== null ? (d.estimated ? '~' : '') + Math.round(d.temp_max_c) + '&deg;C, ' + d.weather : (d.weather || 'no data')}</span></div>`).join('')}
+    </div>
+    ${essentials.length ? `<div class="packing-essentials"><span class="field-label">Don&rsquo;t forget</span><ul>${essentials.map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''}
+    <div class="packing-pieces">
+      ${pieceSection('Pack these tops', packTops, 'No matching tops in your closet.')}
+      ${pieceSection('Pack these bottoms', packBottoms, 'No matching bottoms in your closet.')}
+      ${packOuterwear.length ? pieceSection('Pack this outerwear', packOuterwear, '') : ''}
+      ${pieceSection('Pack these shoes', packFootwear, 'No matching footwear in your closet.')}
+      ${pieceSection('Pack these accessories', packAccessories, 'No matching accessories in your closet.')}
+    </div>
+  `;
+}
+</script>
