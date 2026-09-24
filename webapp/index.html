@@ -1,4 +1,4 @@
-<title>Capsule Week</title>
+<title>closet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   @font-face {
@@ -30,6 +30,9 @@
     --accent-soft: #F3DEE2;
     --gold: #93732F;
     --good: #3F6B4C;
+    --brand-blue: #AED8F1;
+    --brand-blue-deep: #8FC2E3;
+    --brand-ink: #14181C;
     --shadow: 0 1px 2px rgba(32,29,26,0.04), 0 6px 20px -14px rgba(32,29,26,0.18);
   }
   @media (prefers-color-scheme: dark) {
@@ -89,6 +92,37 @@
     position: relative;
   }
 
+  /* ---------- splash (closet-door opening) ---------- */
+  .splash-overlay {
+    position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 430px; z-index: 300; background: var(--brand-blue);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+  }
+  .splash-overlay[hidden] { display: none; }
+  .wordmark-lg {
+    position: relative; z-index: 2; font-family: "Satoshi", -apple-system, sans-serif;
+    font-weight: 700; font-size: 34px; letter-spacing: -0.02em; color: var(--brand-ink);
+    transition: opacity 0.35s ease;
+  }
+  .splash-overlay.open .wordmark-lg { opacity: 0; }
+  .splash-doors { position: absolute; inset: 0; display: flex; perspective: 1200px; }
+  .splash-door {
+    width: 50%; height: 100%; background: var(--brand-blue); position: relative;
+    box-shadow: inset 0 0 0 2px rgba(20,24,28,0.1);
+    transition: transform 0.9s cubic-bezier(.61,.06,.4,.98);
+    transform-style: preserve-3d;
+  }
+  .splash-door-left { transform-origin: left center; border-right: 1px solid rgba(20,24,28,0.15); }
+  .splash-door-right { transform-origin: right center; border-left: 1px solid rgba(20,24,28,0.15); }
+  .splash-overlay.open .splash-door-left { transform: rotateY(-100deg); }
+  .splash-overlay.open .splash-door-right { transform: rotateY(100deg); }
+  .door-handle {
+    position: absolute; top: 50%; width: 5px; height: 46px; border-radius: 999px;
+    background: rgba(20,24,28,0.32); transform: translateY(-50%);
+  }
+  .splash-door-left .door-handle { right: 14px; }
+  .splash-door-right .door-handle { left: 14px; }
+
   /* ---------- onboarding ---------- */
   .onboarding-overlay {
     position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
@@ -124,11 +158,19 @@
     padding: 16px 18px 12px;
     border-bottom: 1px solid var(--line);
   }
-  .app-header .brand { display: flex; flex-direction: column; }
-  .app-header .eyebrow {
-    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin: 0;
+  .app-header .brand { display: flex; align-items: center; gap: 10px; }
+  .logo-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--brand-blue); border-radius: 12px; padding: 6px 12px 7px;
+    box-shadow: 0 2px 6px -2px rgba(20,24,28,0.25);
   }
-  .app-header h1 { font-size: 21px; font-weight: 600; margin: 2px 0 0; }
+  .logo-badge .wordmark {
+    font-family: "Satoshi", -apple-system, sans-serif; font-weight: 700; font-size: 19px;
+    letter-spacing: -0.02em; color: var(--brand-ink); line-height: 1;
+  }
+  .app-header .eyebrow {
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin: 0;
+  }
   .theme-toggle {
     width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line);
     background: var(--surface); color: var(--ink); cursor: pointer;
@@ -554,6 +596,14 @@
 </style>
 
 <div class="app">
+  <div class="splash-overlay" id="splash-overlay">
+    <span class="wordmark-lg">closet</span>
+    <div class="splash-doors">
+      <div class="splash-door splash-door-left"><span class="door-handle"></span></div>
+      <div class="splash-door splash-door-right"><span class="door-handle"></span></div>
+    </div>
+  </div>
+
   <div class="onboarding-overlay" id="onboarding-overlay" hidden>
     <div class="onboarding-skip-row">
       <button type="button" class="onboarding-skip" id="onboarding-skip">Skip</button>
@@ -565,8 +615,8 @@
 
   <header class="app-header">
     <div class="brand">
-      <p class="eyebrow">Capsule Wardrobe</p>
-      <h1>Capsule Week</h1>
+      <span class="logo-badge"><span class="wordmark">closet</span></span>
+      <p class="eyebrow">Capsule Week</p>
     </div>
     <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode">
       <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
@@ -807,12 +857,12 @@ function activeCatalog() { return CATALOG.filter(c => !isInGraveyard(c.item_id))
 function graveyardCatalog() { return CATALOG.filter(c => isInGraveyard(c.item_id)); }
 
 const CAT_ICONS = {
-  top: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 4 7v3h3v10h10V10h3V7l-4-3-2 2h-4z"/></svg>',
-  bottom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10l.5 6.5-.9 11.5h-3l-.6-9-.6 9h-3L8.5 9.5z"/><path d="M6.9 8h10.2"/></svg>',
-  outerwear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 6 5 3 8v4h3v9h12v-9h3V8l-3-3-3-2-1 2h-2z"/></svg>',
-  footwear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19v-4c2-.3 3-1.6 4.5-2.8a2 2 0 0 1 2-.2l1 .5c1.5.7 3 1 4.5 1H21v5.5a1 1 0 0 1-1 1H3z"/></svg>',
-  accessory: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l1 12H5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
-  special: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 14.7 8.6l6.6.6-5 4.4 1.5 6.5L12 16.9 6.2 20.1l1.5-6.5-5-4.4 6.6-.6z"/></svg>',
+  top: '<svg viewBox="0 0 24 24" fill="#D3A62E" stroke="#B5891C" stroke-width="0.6" stroke-linejoin="round"><path d="M8 4 4 7v3h3v10h10V10h3V7l-4-3-2 2h-4z"/></svg>',
+  bottom: '<svg viewBox="0 0 24 24" fill="#8B6F47" stroke="#71592F" stroke-width="0.6" stroke-linejoin="round"><rect x="7" y="3" width="10" height="6" rx="1.3"/><rect x="7" y="9.3" width="4.3" height="11.7" rx="1.1"/><rect x="12.7" y="9.3" width="4.3" height="11.7" rx="1.1"/></svg>',
+  outerwear: '<svg viewBox="0 0 24 24" fill="#B5533E" stroke="#93402E" stroke-width="0.6" stroke-linejoin="round"><path d="M9 3 6 5 3 8v4h3v9h12v-9h3V8l-3-3-3-2-1 2h-2z"/></svg>',
+  footwear: '<svg viewBox="0 0 24 24" fill="#8FC2E3" stroke="#5FA3CC" stroke-width="0.6" stroke-linejoin="round"><path d="M3 19v-4c2-.3 3-1.6 4.5-2.8a2 2 0 0 1 2-.2l1 .5c1.5.7 3 1 4.5 1H21v5.5a1 1 0 0 1-1 1H3z"/></svg>',
+  accessory: '<svg viewBox="0 0 24 24" fill="#6E2438" stroke="#4E1826" stroke-width="0.6" stroke-linejoin="round"><path d="M6 8h12l1 12H5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#6E2438" stroke-width="1.6"/></svg>',
+  special: '<svg viewBox="0 0 24 24" fill="#9B7BA8" stroke="#7C5D89" stroke-width="0.6" stroke-linejoin="round"><path d="M12 2.5 14.7 8.6l6.6.6-5 4.4 1.5 6.5L12 16.9 6.2 20.1l1.5-6.5-5-4.4 6.6-.6z"/></svg>',
 };
 const CAT_LABELS_PLURAL = { top: 'Tops', bottom: 'Bottoms', outerwear: 'Outerwear', footwear: 'Shoes', accessory: 'Accessories', special: 'Special' };
 const ALL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
@@ -863,12 +913,21 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
   applyTheme(current === 'dark' ? 'light' : 'dark');
 });
 
+/* ---------- splash (closet-door opening, plays every load) ---------- */
+(function initSplash() {
+  const splash = document.getElementById('splash-overlay');
+  setTimeout(() => {
+    splash.classList.add('open');
+    setTimeout(() => { splash.hidden = true; }, 950);
+  }, 500);
+})();
+
 /* ---------- onboarding (first visit only) ---------- */
 const ONBOARDING_KEY = 'capsule-week-onboarded';
 const ONBOARDING_SLIDES = [
   {
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>',
-    title: 'Welcome to Capsule Week',
+    title: 'Welcome to closet',
     text: 'Your closet and your calendar, in one place - so getting dressed stops being the hardest part of your day.',
   },
   {
@@ -1703,7 +1762,7 @@ async function exportDayImage(dateStr, dateLabel, entry, pieces, piecesText) {
   const H = 110 + (photoImg ? photoH + 30 : 0) + 40 + pieces.length * pieceRowH + piecesText.length * textRowH + 30;
   canvas.width = W; canvas.height = H;
   ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = '#201D1A'; ctx.font = '600 26px Georgia, serif'; ctx.fillText('Capsule Week', 30, 46);
+  ctx.fillStyle = '#201D1A'; ctx.font = '700 26px "Satoshi", -apple-system, sans-serif'; ctx.fillText('closet', 30, 46);
   ctx.font = '13px monospace'; ctx.fillStyle = '#726B60'; ctx.fillText(dateLabel, 30, 68);
   let y = 100;
   if (photoImg) { ctx.drawImage(photoImg, 30, y, W - 60, photoH); y += photoH + 30; }
