@@ -92,37 +92,6 @@
     position: relative;
   }
 
-  /* ---------- splash (closet-door opening) ---------- */
-  .splash-overlay {
-    position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 100%; max-width: 430px; z-index: 300; background: var(--brand-blue);
-    overflow: hidden; display: flex; align-items: center; justify-content: center;
-  }
-  .splash-overlay[hidden] { display: none; }
-  .wordmark-lg {
-    position: relative; z-index: 2; font-family: "Satoshi", -apple-system, sans-serif;
-    font-weight: 700; font-size: 34px; letter-spacing: -0.02em; color: var(--brand-ink);
-    transition: opacity 0.35s ease;
-  }
-  .splash-overlay.open .wordmark-lg { opacity: 0; }
-  .splash-doors { position: absolute; inset: 0; display: flex; perspective: 1200px; }
-  .splash-door {
-    width: 50%; height: 100%; background: var(--brand-blue); position: relative;
-    box-shadow: inset 0 0 0 2px rgba(20,24,28,0.1);
-    transition: transform 0.9s cubic-bezier(.61,.06,.4,.98);
-    transform-style: preserve-3d;
-  }
-  .splash-door-left { transform-origin: left center; border-right: 1px solid rgba(20,24,28,0.15); }
-  .splash-door-right { transform-origin: right center; border-left: 1px solid rgba(20,24,28,0.15); }
-  .splash-overlay.open .splash-door-left { transform: rotateY(-100deg); }
-  .splash-overlay.open .splash-door-right { transform: rotateY(100deg); }
-  .door-handle {
-    position: absolute; top: 50%; width: 5px; height: 46px; border-radius: 999px;
-    background: rgba(20,24,28,0.32); transform: translateY(-50%);
-  }
-  .splash-door-left .door-handle { right: 14px; }
-  .splash-door-right .door-handle { left: 14px; }
-
   /* ---------- onboarding ---------- */
   .onboarding-overlay {
     position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
@@ -596,14 +565,6 @@
 </style>
 
 <div class="app">
-  <div class="splash-overlay" id="splash-overlay">
-    <span class="wordmark-lg">closet</span>
-    <div class="splash-doors">
-      <div class="splash-door splash-door-left"><span class="door-handle"></span></div>
-      <div class="splash-door splash-door-right"><span class="door-handle"></span></div>
-    </div>
-  </div>
-
   <div class="onboarding-overlay" id="onboarding-overlay" hidden>
     <div class="onboarding-skip-row">
       <button type="button" class="onboarding-skip" id="onboarding-skip">Skip</button>
@@ -912,15 +873,6 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
     || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   applyTheme(current === 'dark' ? 'light' : 'dark');
 });
-
-/* ---------- splash (closet-door opening, plays every load) ---------- */
-(function initSplash() {
-  const splash = document.getElementById('splash-overlay');
-  setTimeout(() => {
-    splash.classList.add('open');
-    setTimeout(() => { splash.hidden = true; }, 950);
-  }, 500);
-})();
 
 /* ---------- onboarding (first visit only) ---------- */
 const ONBOARDING_KEY = 'capsule-week-onboarded';
