@@ -25,9 +25,9 @@
     --ink-muted: #726B60;
     --ink-faint: #A6A093;
     --line: #E7E2D8;
-    --accent: #6E2438;
-    --accent-ink: #FFFFFF;
-    --accent-soft: #F3DEE2;
+    --accent: #8FC2E3;
+    --accent-ink: #14181C;
+    --accent-soft: #E4F1FA;
     --gold: #93732F;
     --good: #3F6B4C;
     --brand-blue: #AED8F1;
@@ -45,9 +45,6 @@
       --ink-muted: #A69E93;
       --ink-faint: #756E64;
       --line: #38343B;
-      --accent: #E28FA0;
-      --accent-ink: #1D1418;
-      --accent-soft: #3A2229;
       --gold: #D4AF61;
       --good: #7FBF93;
       --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -14px rgba(0,0,0,0.6);
@@ -62,9 +59,6 @@
     --ink-muted: #A69E93;
     --ink-faint: #756E64;
     --line: #38343B;
-    --accent: #E28FA0;
-    --accent-ink: #1D1418;
-    --accent-soft: #3A2229;
     --gold: #D4AF61;
     --good: #7FBF93;
     --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -14px rgba(0,0,0,0.6);
@@ -128,7 +122,11 @@
     border-bottom: 1px solid var(--line);
   }
   .app-header .brand { display: flex; align-items: center; gap: 10px; }
-  .logo-img { height: 34px; width: auto; display: block; border-radius: 8px; }
+  .logo-img { height: 34px; width: auto; display: block; }
+  :root[data-theme="dark"] .logo-img { filter: invert(1); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .logo-img { filter: invert(1); }
+  }
   .app-header .eyebrow {
     font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin: 0;
   }
