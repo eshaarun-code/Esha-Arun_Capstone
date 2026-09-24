@@ -244,6 +244,12 @@ def fonts(filename):
     return send_from_directory(os.path.join(APP_DIR, "fonts"), filename)
 
 
+@app.route("/branding/<path:filename>")
+def branding(filename):
+    """Logo and other brand assets."""
+    return send_from_directory(os.path.join(APP_DIR, "branding"), filename)
+
+
 @app.route("/api/classify", methods=["POST"])
 def classify():
     if "photo" not in request.files:
