@@ -131,22 +131,20 @@
   .onboarding-dot.active { background: var(--accent); border-color: var(--accent); width: 18px; }
 
   .app-header {
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; align-items: center; justify-content: center; position: relative;
     padding: 16px 18px 12px;
-    border-bottom: 1px solid var(--line);
+    background: linear-gradient(135deg, #7D2A40, #5A1C2D);
+    border-bottom: 1px solid #4A1725;
   }
   .app-header .brand { display: flex; align-items: center; gap: 10px; }
   .logo-img { height: 34px; width: auto; display: block; }
-  :root[data-theme="dark"] .logo-img { filter: invert(1); }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .logo-img { filter: invert(1); }
-  }
   .app-header .eyebrow {
     font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin: 0;
   }
   .theme-toggle {
-    width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line);
-    background: var(--surface); color: var(--ink); cursor: pointer;
+    position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.12); color: #FFFFFF; cursor: pointer;
     display: flex; align-items: center; justify-content: center; flex: none;
   }
   .theme-toggle svg { width: 17px; height: 17px; }
@@ -185,10 +183,10 @@
   }
 
   /* ---------- drive sync (small, tucked in home screen) ---------- */
-  .drive-sync { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .drive-sync { display: flex; align-items: center; justify-content: flex-start; gap: 8px; margin-bottom: 14px; }
   .drive-sync-btn {
-    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
-    border-radius: 999px; padding: 5px 14px; font-size: 11px; font-weight: 600;
+    border: 1px solid transparent; background: transparent; color: var(--ink-muted);
+    border-radius: 999px; padding: 3px 8px; font-size: 10px; font-weight: 600;
     cursor: pointer; font-family: "Satoshi", -apple-system, sans-serif; white-space: nowrap;
   }
   .drive-sync-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -297,13 +295,15 @@
     padding: 2px 6px; border-radius: 999px; font-weight: 700;
   }
   .tag.season-summer { background: #E9DFA1; color: #4A3E0B; }
-  .tag.season-winter { background: var(--accent-soft); color: var(--accent); }
+  .tag.season-winter { background: #AED8F1; color: #1B4965; }
   .tag.cat { background: var(--surface-sunk); color: var(--ink-muted); }
   .tag.cat-special { background: var(--gold); color: #FFFFFF; }
   .tag.worn { background: var(--good); color: #fff; }
   :root[data-theme="dark"] .tag.season-summer { background: #4A3E0B; color: #E9DFA1; }
+  :root[data-theme="dark"] .tag.season-winter { background: #1B4965; color: #AED8F1; }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .tag.season-summer { background: #4A3E0B; color: #E9DFA1; }
+    :root:not([data-theme="light"]) .tag.season-winter { background: #1B4965; color: #AED8F1; }
   }
 
   .fab-add {
@@ -314,7 +314,21 @@
   }
   .fab-add svg { width: 16px; height: 16px; }
 
+  /* ---------- graveyard ---------- */
+  .graveyard-hero { display: flex; justify-content: center; margin-top: -8px; }
+  .graveyard-hero img { width: 280px; height: 280px; object-fit: contain; }
+  :root[data-theme="dark"] .graveyard-hero img { filter: invert(1); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .graveyard-hero img { filter: invert(1); }
+  }
+
   /* ---------- packing ---------- */
+  .pack-hero { display: flex; justify-content: center; margin-top: 20px; }
+  .pack-hero-img { width: 280px; height: 280px; object-fit: contain; flex: none; }
+  :root[data-theme="dark"] .pack-hero-img { filter: invert(1); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .pack-hero-img { filter: invert(1); }
+  }
   .packing-form {
     background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
     padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;
@@ -585,7 +599,7 @@
 
   <header class="app-header">
     <div class="brand">
-      <img class="logo-img" src="/branding/logo.png" alt="closet">
+      <img class="logo-img" src="/branding/logo-white.png" alt="closet">
     </div>
     <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode">
       <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
@@ -660,6 +674,7 @@
       </form>
       <div class="status-text" id="packing-status"></div>
       <div class="packing-result" id="packing-result"></div>
+      <div class="pack-hero"><img class="pack-hero-img" src="/branding/pack-hero.png" alt=""></div>
     </section>
 
     <!-- ============ HEALTH: insights + graveyard ============ -->
@@ -672,6 +687,7 @@
       </div>
       <p class="add-help" style="margin-bottom:12px;">Pieces you&rsquo;ve set aside to donate or trash. Nothing here is permanent until you choose one.</p>
       <div class="closet-grid" id="graveyard-grid"></div>
+      <div class="graveyard-hero"><img src="/branding/graveyard-hero.png" alt=""></div>
     </section>
 
   </div>
@@ -827,7 +843,7 @@ function graveyardCatalog() { return CATALOG.filter(c => isInGraveyard(c.item_id
 
 const CAT_ICONS = {
   top: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 4 7v3h3v10h10V10h3V7l-4-3-2 2h-4z"/></svg>',
-  bottom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10l.5 6.5-.9 11.5h-3l-.6-9-.6 9h-3L8.5 9.5z"/></svg>',
+  bottom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 3h9L16 21h-2.8L12 10l-1.2 11H8z"/><path d="M7.3 6.5h9.4"/></svg>',
   outerwear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 8 4H6L2 8l2 3 2-2v12h12V9l2 2 2-3-4-4h-2z"/></svg>',
   footwear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19v-4c2-.3 3-1.6 4.5-2.8a2 2 0 0 1 2-.2l1 .5c1.5.7 3 1 4.5 1H21v5.5a1 1 0 0 1-1 1H3z"/></svg>',
   accessory: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l1 12H5z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
@@ -1120,7 +1136,6 @@ function renderCloset() {
         <div class="tag-row">
           <span class="tag cat${c.category === 'special' ? ' cat-special' : ''}">${c.category === 'special' ? 'special occasion' : c.category}</span>
           ${c.season.map(s => `<span class="tag season-${s === 'summer' ? 'summer' : 'winter'}">${s === 'summer' ? '&#9728;' : '&#10052;'} ${s}</span>`).join('')}
-          ${wearCount(c.item_id) > 0 ? `<span class="tag worn">${wearCount(c.item_id)}&times;</span>` : ''}
         </div>
       </div>
     </div>
@@ -1152,7 +1167,7 @@ function renderGraveyard() {
         </div>
       </div>
     </div>
-  `).join('') : '<p class="insight-empty">Nothing here yet - send a piece over from the closet if you&rsquo;ve stopped wearing it.</p>';
+  `).join('') : '';
 
   grid.querySelectorAll('.item-action[data-action="restore"]').forEach(btn => btn.addEventListener('click', () => restoreFromGraveyard(btn.dataset.itemId)));
   grid.querySelectorAll('.gy-btn.donate').forEach(btn => btn.addEventListener('click', () => disposeItem(btn.dataset.itemId, 'donate')));
