@@ -98,6 +98,9 @@ OUTFIT_LOG_PIECES = {
     "2026-09-17": ["asymmetric-long-sleeve-top-navy", "agolde-light-blue-denim-mini-skirt", "navy-longchamp-tote", "adidas-spezial-navy-sneakers"],
     "2026-09-18": ["cream-polka-dot-bandeau-top", "espresso-wide-leg-jeans"],
     "2026-09-19": ["cream-v-neck-tie-back-top", "floral-embroidered-flare-jeans", "cream-brown-ny-baseball-cap", "dark-brown-leather-buckle-tote", "burgundy-patent-ballet-flats"],
+    "2026-09-22": ["navy-square-neck-tank-top", "floral-embroidered-flare-jeans", "cream-brown-ny-baseball-cap", "dark-brown-leather-buckle-tote"],
+    "2026-09-23": ["navy-polka-dot-one-shoulder-top", "cream-wide-leg-drawstring-pants", "navy-longchamp-tote", "adidas-spezial-navy-sneakers"],
+    "2026-09-24": ["cream-v-neck-tie-back-top", "espresso-wide-leg-jeans", "cream-brown-ny-baseball-cap", "dark-brown-leather-buckle-tote", "cream-black-mary-jane-flats"],
 }
 OUTFIT_LOG_TEXT = {
     "2026-09-03": ["Cream floral embroidered top"],
@@ -108,6 +111,7 @@ OUTFIT_LOG_TEXT = {
     "2026-09-13": ["Black and white canvas sneakers"],
     "2026-09-14": ["Black high-top sneakers"],
     "2026-09-18": ["Black shoulder bag", "Black and white canvas sneakers"],
+    "2026-09-22": ["Black canvas sneakers"],
 }
 
 
