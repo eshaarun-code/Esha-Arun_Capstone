@@ -106,14 +106,21 @@
   }
   .onboarding-slides { flex: 1; position: relative; overflow: hidden; }
   .onboarding-slide {
-    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 20px 32px; opacity: 0; transform: translateX(24px); transition: opacity 0.25s, transform 0.25s;
-    pointer-events: none;
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    text-align: center; padding: 8px 28px 20px; opacity: 0; transform: translateX(24px); transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none; overflow-y: auto;
   }
   .onboarding-slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+  .onboarding-visual {
+    width: 100%; height: 42vh; max-height: 300px; flex: none;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+  }
+  .onboarding-illustration {
+    max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 18px;
+  }
   .onboarding-icon {
     width: 88px; height: 88px; border-radius: 999px; background: var(--surface-sunk);
-    display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: center; color: var(--accent);
   }
   .onboarding-icon svg { width: 38px; height: 38px; }
   .onboarding-slide h2 { font-size: 22px; font-weight: 700; margin: 0 0 10px; font-family: "Satoshi", -apple-system, sans-serif; }
@@ -878,7 +885,7 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 const ONBOARDING_KEY = 'capsule-week-onboarded';
 const ONBOARDING_SLIDES = [
   {
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>',
+    img: '/branding/onboarding-closet.jpg',
     title: 'Welcome to closet',
     text: 'Your closet and your calendar, in one place - so getting dressed stops being the hardest part of your day.',
   },
@@ -888,12 +895,12 @@ const ONBOARDING_SLIDES = [
     text: 'Every day on the calendar gets a top+bottom suggestion built from today&rsquo;s actual forecast - and your past days show what you really wore.',
   },
   {
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>',
+    img: '/branding/onboarding-browsing.jpg',
     title: 'A closet that knows itself',
     text: 'See what you actually wear, what&rsquo;s gathering dust, and mix pieces into new outfits with the built-in outfit builder.',
   },
   {
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+    img: '/branding/onboarding-rack.jpg',
     title: 'Packing, without the guesswork',
     text: 'Tell it where you&rsquo;re headed and for how long - it builds a packing list from your own closet, matched to that destination&rsquo;s weather.',
   },
@@ -907,7 +914,9 @@ const onboardingNextBtn = document.getElementById('onboarding-next');
 function renderOnboarding() {
   onboardingSlidesEl.innerHTML = ONBOARDING_SLIDES.map((s, i) => `
     <div class="onboarding-slide ${i === onboardingIndex ? 'active' : ''}">
-      <div class="onboarding-icon">${s.icon}</div>
+      <div class="onboarding-visual">
+        ${s.img ? `<img class="onboarding-illustration" src="${s.img}" alt="">` : `<div class="onboarding-icon">${s.icon}</div>`}
+      </div>
       <h2>${s.title}</h2>
       <p>${s.text}</p>
     </div>
